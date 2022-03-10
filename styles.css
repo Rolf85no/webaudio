@@ -1,0 +1,101 @@
+*{
+    font-family: 'Trebuchet MS', monospace;
+}
+
+.slide-container {
+    margin: 1rem auto;
+  }
+
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background-color: #f2acf5;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border: 2px outset #e5a9f8ad;
+  }
+
+  .active{
+    animation: mymove 1s infinite;
+    animation-direction: alternate-reverse;
+  }
+
+  @keyframes mymove {
+      0% { background-color: #f2acf5; }
+      50% { background-color: #cdbdf3 ; }
+      100% { background-color: #f2acf5;}
+}
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #7604aa;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #7604aa;
+    cursor: pointer;
+  }
+
+  .keyboard, .stopSounds{
+    background-color: #7604aa;
+    color: #fff9f9;
+    width: 2.5rem;
+    height: 4rem;
+    border: transparent;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: auto 8px;
+    border-radius: 10%;
+  }
+
+  .stopSounds{
+    background-color: #f2acf5;
+    color: #000000;
+    height: auto;
+    width: 8rem;
+    border-radius: 0;
+  }
+
+  .tangenter{
+      margin: 18px 0;
+  }
+
+  #waveforms{
+    width: 50%;
+    margin-top: 1rem;
+  
+  }
+
+  .waveform-types{
+    width: 50%;
+    position:relative;
+   right: -25%;
+   margin-bottom: 3rem;
+  }
+
+  .container{
+      margin-top: 48px;
+      text-align: center;
+  }
+
+  .octaves{
+      display: flex;
+      justify-content: space-between;
+  }
+
+  .centered{
+    margin: 0 auto;
+  }
