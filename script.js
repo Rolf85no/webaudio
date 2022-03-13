@@ -40,16 +40,37 @@ const KEYS = {
   'k': 'c-5'
 }
 
-const unisonWidth = 10;
+const unisonWidth = 2;
 const oscBank = new Array(3);
-
+let actx, masterGain;
 let osc;
 let waveform = 0;
 let tuning = 1;
+let volume = 0.7;
+let pressed = false;
+const synthEl = document.querySelector('.synth');
+const startButton = document.querySelector('.start');
+
+function audioSetup(){
+  actx = new (AudioContext || webkitAudioContext());
+  if (!actx) {
+    alert ('Not supported');
+  }
+    synthEl.classList.remove('hidden');
+    startButton.classList.add('hidden');
+
+  masterGain = actx.createGain();
+  masterGain.connect(actx.destination);
+  
+}
 
 function octaveSelect(octaveValue, octaveId){
   tuning = octaveValue;
   octaveId.classList.add('active');
+}
+
+function volumeChange(volumeValue){
+    volume = volumeValue;
 }
 
 function waveformSelect(waveFormValue, waveFormId){
@@ -63,38 +84,48 @@ document.querySelectorAll('button[data-note]').forEach((button)=>{
   });
 
   button.addEventListener('mouseup', () =>{
-    osc.stop()});
+    osc.stop();
+  });
 });
 
-document.addEventListener('keypress', (event)=>{
+document.addEventListener('keydown', (event)=>{
   let keyName = event.key;
   if (keyName in KEYS){
-    noteOn(KEYS[keyName]);
+    if(!pressed){
+      noteOn(KEYS[keyName]);
+      pressed = true;
+    }
+    
   }
   document.addEventListener('keyup',() =>{
     osc.stop();
+    pressed = false;
   
   });
   
 });
 
+function noteOn (note){
+  const freq = NOTES[note];
+  oscBank[0] = start(freq, 0);
+};
 
-function start(freq, detune){
-const actx = new (AudioContext || webkitAudioContext());
-if (!actx) alert ('Not supported');
+
+// ADSR BLOCK
+
+
+// FILTER BLOCK
+
+
+const start = (freq, detune) =>{
 osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
 osc.detune.value = detune;
-osc.connect(actx.destination);  
+masterGain.gain.value= volume;
+osc.connect(masterGain);  
 osc.start();
+return osc; 
  }
 
- function noteOn (note){
-   const freq = NOTES[note];
-   oscBank[0] = start(freq, 0);
- }
 
-// function stop(){
-//   osc.stop(actx.currentTime + 1);
-//  }

@@ -10,56 +10,69 @@
     </head>
     <body>
         <div class="container">
-            <div class="row slide-container centered">
-                    <div class="col">
-                        <label for="octDown">Down: </label>
-                        <input type="range" min="0.25" max="1" step="0.25" value="1" id="octDown" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
+            <div class="synth hidden">
+                <div class="row slide-container centered">
+                        <div class="col">
+                            <label for="octDown">Down: </label>
+                            <input type="range" min="0.25" max="1" step="0.25" value="1" id="octDown" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
+                        </div>
+                        
+                        <div class="col-2">Octaves</div>
+                            
+                        <div class="col"> 
+                            <label for="octUp">Up:</label>
+                            <input type="range" min="1" max="4" step="value * value" value="1" id="octUp" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
+                        </div>          
+                </div>
+                
+                <div class="slide-container centered">
+                    <div class="row">
+                        <label for="waveforms">Waveforms:</label>
+                        <div class="col">
+                            <input type="range" min="0" max="3" step="1" value="0" id="waveforms" class="slider centered" onchange="waveformSelect(this.value, document.getElementById(this.id))"/>
+                        </div>
                     </div>
-                    
-                    <div class="col-2">Octaves</div>
-                           
-                    <div class="col"> 
-                        <label for="octUp">Up:</label>
-                        <input type="range" min="1" max="4" step="value * value" value="1" id="octUp" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
-                    </div>          
-            </div>
-            
-            <div class="slide-container centered">
-                <div class="row">
-                <label for="waveforms">Waveforms:</label>
-                <div class"col"><input type="range" min="0" max="3" step="1" value="0" id="waveforms" class="slider centered" onchange="waveformSelect(this.value, document.getElementById(this.id))"/></div>
+                    <div class="row waveform-types">
+                        <div class="col">Sine</div>
+                        <div class="col">Square</div>
+                        <div class="col">Saw</div>
+                        <div class="col">Triangle</div>
+                    </div>
                 </div>
-                <div class="row waveform-types">
-                    <div class="col">Sine</div>
-                    <div class="col">Square</div>
-                    <div class="col">Saw</div>
-                    <div class="col">Triangle</div>
+
+                <div class="slide-container centered">
+                    <div class="row">
+                        <label for="waveforms">Volume</label>
+                        <div class="col">
+                            <input type="range" min="0" max="1" step="0.1" value="0.7" id="waveforms" class="slider centered" onchange="volumeChange(this.value)")/>
+                        </div>
+                    </div>
+                </div>    
+                
+
+                <div class="tangenter">
+                    <button data-note="c#4" class="keyboard">C#4</button>
+                    <button data-note="d#4" class="keyboard">D#4</button>
+                    <button data-note="f#4" class="keyboard">F#4</button>
+                    <button data-note="g#4" class="keyboard">G#4</button>
+                    <button data-note="a#4" class="keyboard">A#4</button>
+
+                </div>
+                <div class="tangenter">
+                    <button data-note="c-4" class="keyboard">C-4</button>
+                    <button data-note="d-4" class="keyboard">D-4</button>
+                    <button data-note="e-4" class="keyboard">E-4</button>
+                    <button data-note="f-4" class="keyboard">F-4</button>
+
+                    <button data-note="g-4" class="keyboard">G-4</button>
+                    <button data-note="a-4" class="keyboard">A-4</button>
+                    <button data-note="h-4" class="keyboard">H-4</button>
+                    <button data-note="c-5" class="keyboard">C-5</button>
                 </div>
             </div>
-            
 
-            <div class="tangenter">
-                <button data-note="c#4" class="keyboard">C#4</button>
-                <button data-note="d#4" class="keyboard">D#4</button>
-                <button data-note="f#4" class="keyboard">F#4</button>
-                <button data-note="g#4" class="keyboard">G#4</button>
-                <button data-note="a#4" class="keyboard">A#4</button>
-
-            </div>
-            <div class="tangenter">
-                <button data-note="c-4" class="keyboard">C-4</button>
-                <button data-note="d-4" class="keyboard">D-4</button>
-                <button data-note="e-4" class="keyboard">E-4</button>
-                <button data-note="f-4" class="keyboard">F-4</button>
-
-                <button data-note="g-4" class="keyboard">G-4</button>
-                <button data-note="a-4" class="keyboard">A-4</button>
-                <button data-note="h-4" class="keyboard">H-4</button>
-                <button data-note="c-5" class="keyboard">C-5</button>
-            </div>
-
-            <div class="row centered">
-                <div class="col"><button class="stopSounds">Stop sounds</button></div>
+            <div class="row centered startButton">
+                <div class="col"><button class="start" onclick="audioSetup()">Start synth</button></div>
             </div>
         </div>
         
