@@ -40,7 +40,7 @@ const KEYS = {
   'k': 'c-5'
 }
 
-const unisonWidth = 2;
+let unisonWidth = 2;
 const oscBank = new Array(3);
 let actx, masterGain;
 let osc;
@@ -72,6 +72,9 @@ function octaveSelect(octaveValue, octaveId){
 function volumeChange(volumeValue){
     volume = volumeValue;
 }
+function unison(unisonValue){
+    unisonWidth = unisonValue;
+}
 
 function waveformSelect(waveFormValue, waveFormId){
   waveform = waveFormValue;
@@ -79,12 +82,12 @@ function waveformSelect(waveFormValue, waveFormId){
 
 document.querySelectorAll('button[data-note]').forEach((button)=>{
   button.addEventListener('mousedown', () =>{
-   noteOn(button.dataset.note)
-
+  noteOn(button.dataset.note);
   });
 
   button.addEventListener('mouseup', () =>{
-    osc.stop();
+    oscBank.forEach(element => element.stop());
+
   });
 });
 
@@ -94,11 +97,11 @@ document.addEventListener('keydown', (event)=>{
     if(!pressed){
       noteOn(KEYS[keyName]);
       pressed = true;
-    }
-    
+    } 
   }
+  
   document.addEventListener('keyup',() =>{
-    osc.stop();
+    oscBank.forEach(element => element.stop());
     pressed = false;
   
   });
@@ -108,6 +111,8 @@ document.addEventListener('keydown', (event)=>{
 function noteOn (note){
   const freq = NOTES[note];
   oscBank[0] = start(freq, 0);
+  oscBank[1] = start(freq, unisonWidth);
+  oscBank[2] = start(freq, -unisonWidth);
 };
 
 
@@ -118,7 +123,7 @@ function noteOn (note){
 
 
 const start = (freq, detune) =>{
-osc = actx.createOscillator();
+const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
 osc.detune.value = detune;
