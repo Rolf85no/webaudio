@@ -3,7 +3,7 @@
 }
 
 .slide-container {
-    margin: 1rem auto;
+    margin: 2rem auto;
   }
 
   .slider {
@@ -73,17 +73,7 @@
       margin: 18px 0;
   }
 
-  #waveforms{
-    width: 50%;
-    margin-top: 1rem;
-  
-  }
 
-  .waveform-types{
-    width: 50%;
-    position:relative;
-   right: -25%;
-  }
 
   .container{
       margin-top: 48px;
@@ -99,6 +89,28 @@
     margin: 0 auto;
   }
 
+
   .hidden{
     display: none;
+  }
+
+  .keyboardButton{
+    width: 6rem;
+    cursor: pointer; 
+  }
+
+  .svgs{
+    width: 1.5rem;
+  }
+
+  .icon-col{
+    text-align: left
+  }
+
+  .volumeUnison{
+    margin: 0 1rem;
+  }
+
+  .muteButton{
+    cursor: pointer;
   }

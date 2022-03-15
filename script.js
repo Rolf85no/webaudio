@@ -1,11 +1,19 @@
 
 'use strict'
 
+
 const WAVEFORMS = [
   'sine',
   'square',
   'sawtooth',
   'triangle'
+]
+
+const FILTERS = [
+  'lowpass',
+  'highpass',
+  'bandpass',
+  'notch'
 ]
 
 const NOTES = {
@@ -40,16 +48,22 @@ const KEYS = {
   'k': 'c-5'
 }
 
+
 let unisonWidth = 2;
 const oscBank = new Array(3);
 let actx, masterGain;
-let osc;
-let waveform = 0;
+let osc, filter;
+let filterValue = 15000;
+let waveform = 1;
 let tuning = 1;
+let filterType = 0;
 let volume = 0.7;
 let pressed = false;
 const synthEl = document.querySelector('.synth');
 const startButton = document.querySelector('.start');
+const freqValueEl = document.getElementById('freqValue');
+freqValueEl.textContent = filterValue + 'hz'; 
+
 
 function audioSetup(){
   actx = new (AudioContext || webkitAudioContext());
@@ -60,8 +74,17 @@ function audioSetup(){
     startButton.classList.add('hidden');
 
   masterGain = actx.createGain();
-  masterGain.connect(actx.destination);
+  filter = actx.createBiquadFilter();
   
+}
+
+function display(element){
+  if (element.classList.contains('hidden')){
+    element.classList.remove('hidden');
+  }
+  else{
+    element.classList.add('hidden');
+  }
 }
 
 function octaveSelect(octaveValue, octaveId){
@@ -70,14 +93,29 @@ function octaveSelect(octaveValue, octaveId){
 }
 
 function volumeChange(volumeValue){
+    let muteButton = document.querySelector('.muteButton');
+    if (volumeValue === 0){
+      muteButton.src = 'images/mute.svg';
+    }
+    else{
+      muteButton.src = 'images/volume.svg';
+    }
     volume = volumeValue;
 }
 function unison(unisonValue){
     unisonWidth = unisonValue;
 }
 
-function waveformSelect(waveFormValue, waveFormId){
+function waveformSelect(waveFormValue){
   waveform = waveFormValue;
+}
+function filterSelect(filterValue){
+  filterType = filterValue;
+}
+
+function filterFreq(value){
+  filterValue = value;
+  freqValueEl.textContent= String(value) + 'hz';
 }
 
 document.querySelectorAll('button[data-note]').forEach((button)=>{
@@ -119,16 +157,21 @@ function noteOn (note){
 // ADSR BLOCK
 
 
-// FILTER BLOCK
-
-
 const start = (freq, detune) =>{
 const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
 osc.detune.value = detune;
-masterGain.gain.value= volume;
-osc.connect(masterGain);  
+masterGain.gain.value= volume / oscBank.length;
+
+// FILTER BLOCK
+filter.type = FILTERS[filterType];
+filter.frequency.value = filterValue;
+filter.Q.value = 1;
+
+osc.connect(masterGain);
+masterGain.connect(filter);
+filter.connect(actx.destination);  
 osc.start();
 return osc; 
  }
