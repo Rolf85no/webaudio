@@ -16,6 +16,9 @@ const FILTERS = [
   'notch'
 ]
 
+const ADSR = {attack:0, decay:0.3, sustain:1, release:1};
+const STAGE_MAX_TIME = 2;
+
 const NOTES = {
   'c-4':261.63,
   'c#4':277.18,
@@ -57,7 +60,7 @@ let filterValue = 15000;
 let waveform = 1;
 let tuning = 1;
 let filterType = 0;
-let volume = 0.7;
+let volume = 0.5;
 let pressed = false;
 const synthEl = document.querySelector('.synth');
 const startButton = document.querySelector('.start');
@@ -118,17 +121,19 @@ function filterFreq(value){
   freqValueEl.textContent= String(value) + 'hz';
 }
 
+// START NOTE MOUSE
 document.querySelectorAll('button[data-note]').forEach((button)=>{
   button.addEventListener('mousedown', () =>{
   noteOn(button.dataset.note);
   });
 
   button.addEventListener('mouseup', () =>{
-    oscBank.forEach(element => element.stop());
+    noteOff();
 
   });
 });
 
+//START NOTE KEYS
 document.addEventListener('keydown', (event)=>{
   let keyName = event.key;
   if (keyName in KEYS){
@@ -139,7 +144,7 @@ document.addEventListener('keydown', (event)=>{
   }
   
   document.addEventListener('keyup',() =>{
-    oscBank.forEach(element => element.stop());
+    oscBank.forEach(element => noteOff(element));
     pressed = false;
   
   });
@@ -147,29 +152,46 @@ document.addEventListener('keydown', (event)=>{
 });
 
 function noteOn (note){
+  masterGain.gain.cancelScheduledValues(ADSR.attack * STAGE_MAX_TIME);
   const freq = NOTES[note];
   oscBank[0] = start(freq, 0);
   oscBank[1] = start(freq, unisonWidth);
   oscBank[2] = start(freq, -unisonWidth);
 };
 
+function noteOff(element){
+  const now = actx.currentTime;
+  const relDuration = ADSR.release * STAGE_MAX_TIME;
+  const relEndTime = now + relDuration;
+  masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+  masterGain.gain.linearRampToValueAtTime(0,relEndTime);
+  element.stop(relEndTime);
 
-// ADSR BLOCK
+}
 
-
+// OSCILLATOR
 const start = (freq, detune) =>{
 const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
 osc.detune.value = detune;
-masterGain.gain.value= volume / oscBank.length;
+let currentGain = volume / oscBank.length
+masterGain.gain.value= currentGain;
+osc.connect(masterGain);
 
-// FILTER BLOCK
+//ATTACK DECAY
+const now = actx.currentTime;
+const atkDuration = ADSR.attack * STAGE_MAX_TIME;
+const decayDuration = ADSR.decay * STAGE_MAX_TIME;
+const atkEndTime = actx.currentTime + atkDuration;
+masterGain.gain.setValueAtTime(0, now);
+masterGain.gain.linearRampToValueAtTime(currentGain,atkEndTime);
+masterGain.gain.setTargetAtTime(ADSR.sustain * currentGain, atkEndTime, decayDuration);
+
+//FILTER BLOCK
 filter.type = FILTERS[filterType];
 filter.frequency.value = filterValue;
 filter.Q.value = 1;
-
-osc.connect(masterGain);
 masterGain.connect(filter);
 filter.connect(actx.destination);  
 osc.start();
