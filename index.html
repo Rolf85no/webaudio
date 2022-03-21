@@ -74,8 +74,20 @@
                             </div>
                             <div class="row">
                                 <label for="filter" class="hidden">Filter</label>
-                                    <input type="range" min="40" max="15000" step="100" value="15000" id="filter" class="slider" onchange="filterFreq(this.value)")/>
+                                    <input type="range" min="40" max="15000" step="value / 40" value="15000" id="filter" class="slider" onmousemove="filterFreq(this.value)")/>
                                     <p id="freqValue"></p>
+                            </div>
+                        </div>
+                        <div class="col volumeUnison">
+                            <div class="row">
+                                <div class="col icon-col">
+                                    <img src="images/qvalue.svg" class="svgs">
+                                </div>  
+                            </div>
+                            <div class="row">
+                                <label for="q" class="hidden">Q-value</label>
+                                    <input type="range" min="0.5" max="50" step="1" value="0.5" id="q" class="slider" onmousemove="filterQ(this.value)")/>
+                                    <p id="qValue"></p>
                             </div>
                         </div>
 
@@ -92,9 +104,53 @@
                         </div>
                         
                     </div>
-                </div>    
+                </div>
                 
-                <img src="images/piano.svg" class="keyboardButton" onclick="display(document.getElementById('pianoRoll'))">
+                <div class="slide-container">
+                    <div class="row">   
+                        <div class="col icon-col">
+                            <img src="images/attack.svg" class="svgs">
+                        </div>
+                        <div class="col icon-col">
+                            <img src="images/decay.svg" class="svgs">
+                        </div>
+                        <div class="col icon-col">
+                            <img src="images/sustain.svg" class="svgs">
+                        </div>   
+                        <div class="col icon-col">
+                            <img src="images/release.svg" class="svgs">
+                        </div>   
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col">    
+                            <label for="attack" class="hidden">Attack</label>
+                            <input type="range" min="0" max="2" step="0.05" value="0" id="attack" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                        </div>
+
+                        <div class="col">   
+                            <label for="decay" class="hidden">Decay</label>
+                            <input type="range" min="0" max="1" step="0.05" value="0" id="decay" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                        </div> 
+                        
+                        <div class="col">    
+                            <label for="sustain" class="hidden">Sustain</label>
+                            <input type="range" min="0" max="1" step="0.05" value="0.2" id="sustain" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                        </div>
+
+                        <div class="col">    
+                            <label for="release" class="hidden">Release</label>
+                            <input type="range" min="0" max="2" step="0.05" value="0" id="release" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                        </div> 
+                    </div>     
+                    
+                </div>
+
+                <div class="row">
+                    <div class="col"><img src="images/piano.svg" class="keyboardButton"onclick="display(document.getElementById('pianoRoll'))"></div>
+                </div>
+                
                 <div id="pianoRoll" class="pianoRoll hidden">
                     <div class="tangenter">
                         <button data-note="c#4" class="keyboard">C#4</button>

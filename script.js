@@ -16,8 +16,14 @@ const FILTERS = [
   'notch'
 ]
 
-const ADSR = {attack:0, decay:0.3, sustain:1, release:1};
+const ADSR = {attack:0, decay:0, sustain:0.2, release:0};
 const STAGE_MAX_TIME = 2;
+
+const echo={
+  time:0.1,
+  feedback: 0.5,
+  maxDuration: 2
+};
 
 const NOTES = {
   'c-4':261.63,
@@ -60,12 +66,15 @@ let filterValue = 15000;
 let waveform = 1;
 let tuning = 1;
 let filterType = 0;
+let qValue = 0.5;
 let volume = 0.5;
 let pressed = false;
 const synthEl = document.querySelector('.synth');
 const startButton = document.querySelector('.start');
 const freqValueEl = document.getElementById('freqValue');
+const qValueEl = document.getElementById('qValue');
 freqValueEl.textContent = filterValue + 'hz'; 
+qValueEl.textContent = qValue; 
 
 
 function audioSetup(){
@@ -121,6 +130,32 @@ function filterFreq(value){
   freqValueEl.textContent= String(value) + 'hz';
 }
 
+function filterQ(value){
+  qValue = value;
+  qValueEl.textContent = String(value);
+}
+
+function changeADSR(value, envelope){
+  switch(envelope){
+    case 'attack':
+      ADSR.attack = value;
+      break;
+    case 'decay':
+      ADSR.decay = value;
+      break;
+    case 'release':
+      ADSR.release = value;
+      break;
+    case 'sustain':
+      ADSR.sustain = value;
+      break;
+    default:
+      console.log('not working');
+  }
+   
+  
+}
+
 // START NOTE MOUSE
 document.querySelectorAll('button[data-note]').forEach((button)=>{
   button.addEventListener('mousedown', () =>{
@@ -152,7 +187,7 @@ document.addEventListener('keydown', (event)=>{
 });
 
 function noteOn (note){
-  masterGain.gain.cancelScheduledValues(ADSR.attack * STAGE_MAX_TIME);
+  masterGain.gain.cancelScheduledValues(actx.currentTime);
   const freq = NOTES[note];
   oscBank[0] = start(freq, 0);
   oscBank[1] = start(freq, unisonWidth);
@@ -161,11 +196,12 @@ function noteOn (note){
 
 function noteOff(element){
   const now = actx.currentTime;
+  masterGain.gain.cancelScheduledValues(now);
   const relDuration = ADSR.release * STAGE_MAX_TIME;
   const relEndTime = now + relDuration;
   masterGain.gain.setValueAtTime(masterGain.gain.value, now);
   masterGain.gain.linearRampToValueAtTime(0,relEndTime);
-  element.stop(relEndTime);
+  element.stop(now);
 
 }
 
@@ -191,9 +227,23 @@ masterGain.gain.setTargetAtTime(ADSR.sustain * currentGain, atkEndTime, decayDur
 //FILTER BLOCK
 filter.type = FILTERS[filterType];
 filter.frequency.value = filterValue;
-filter.Q.value = 1;
+filter.Q.value = qValue;
 masterGain.connect(filter);
-filter.connect(actx.destination);  
+//Delay Node
+const dlyFilter = actx.createBiquadFilter();
+dlyFilter.type = FILTERS[0];
+dlyFilter.frequency.value = 2000;
+const delayNode = actx.createDelay();
+delayNode.delayTime.value=echo.time * echo.maxDuration;
+delayNode.connect(actx.destination); 
+const delayGain = actx.createGain();
+delayGain.gain.value = echo.feedback;
+filter.connect(delayNode);
+delayNode.connect(delayGain);
+delayGain.connect(dlyFilter);
+dlyFilter.connect(delayNode);
+
+ 
 osc.start();
 return osc; 
  }
