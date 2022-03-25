@@ -115,7 +115,7 @@ function volumeChange(volumeValue){
       muteButton.src = 'images/volume.svg';
     }
     masterGain.gain.value = volumeValue;
-    volumeFieldEl.textContent = `${value* 100}%`;
+    volumeFieldEl.textContent = `${volumeValue* 100}%`;
 }
 function unison(unisonValue){
     unisonWidth = unisonValue;
@@ -250,7 +250,7 @@ dlyHPFilter.type = FILTERS[1];
 dlyHPFilter.frequency.value = 200;
 const delayNode = actx.createDelay();
 const delayGain = actx.createGain();
-delayNode.delayTime.value=echo.time;
+delayNode.delayTime.value= echo.time;
 delayGain.gain.value = echo.feedback;
 dlyLPFilter.connect(delayNode);
 dlyLPFilter.connect(delayNode);
