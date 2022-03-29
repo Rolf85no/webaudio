@@ -15,14 +15,14 @@
                 <div class="row slide-container">
                         <div class="col">
                             <label for="octDown">Down: </label>
-                            <input type="range" min="0.25" max="1" step="0.25" value="1" id="octDown" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
+                            <input type="range" min="0.25" max="1" step="0.25" value="1" id="octDown" class="slider" onchange="synthControls.octaveSelect(this.value)"/>
                         </div>
                         
                         <div class="col-2">Octaves</div>
                             
                         <div class="col"> 
                             <label for="octUp">Up:</label>
-                            <input type="range" min="1" max="4" step="value * value" value="1" id="octUp" class="slider" onchange="octaveSelect(this.value, document.getElementById(this.id))"/>
+                            <input type="range" min="1" max="4" step="value * value" value="1" id="octUp" class="slider" onchange="synthControls.octaveSelect(this.value)"/>
                         </div>          
                 </div>
                 
@@ -30,7 +30,7 @@
                     <div class="row">
                         <div class="col">
                         <label for="waveforms">Waveforms:</label>
-                            <input type="range" min="0" max="3" step="1" value="1" id="waveforms" class="slider centered" onchange="waveformSelect(this.value)"/>
+                            <input type="range" min="0" max="3" step="1" value="2" id="waveforms" class="slider centered" onchange="synthControls.waveformSelect(this.value)"/>
                             <div class="row waveform-types">
                                 <div class="col">Sine</div>
                                 <div class="col">Square</div>
@@ -41,7 +41,7 @@
 
                         <div class="col">
                             <label for="filters">Filters: </label>
-                            <input type="range" min="0" max="3" step="1" value="1" id="filters" class="slider centered" onchange="filterSelect(this.value)"/>
+                            <input type="range" min="0" max="3" step="1" value="0" id="filters" class="slider centered" onmousemove="synthControls.filterSelect(this.value)"/>
                             <div class="row filter-types">
                                 <div class="col">LP</div>
                                 <div class="col">HP</div>
@@ -58,12 +58,12 @@
                         <div class="col volumeUnison">
                             <div class="row">
                                 <div class="col icon-col">
-                                    <img src="images/volume.svg" class="svgs muteButton" onclick="volumeChange(0)">
+                                    <img src="images/volume.svg" class="svgs muteButton" onclick="synthControls.volumeChange(0)">
                                 </div>  
                             </div>
                             <div class="row">
                                 <label for="volume" class="hidden">Volume</label>
-                                    <input type="range" min="0" max="1" step="0.05" value="0.5" id="volume" class="slider" onmousemove="volumeChange(this.value)")/>
+                                    <input type="range" min="0" max="1" step="0.05" value="0.5" id="volume" class="slider" onmousemove="synthControls.volumeChange(this.value)")/>
                                     <p id="volumeValue"></p>
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                             </div>
                             <div class="row">
                                 <label for="filter" class="hidden">Filter</label>
-                                    <input type="range" min="40" max="15000" step="value / 40" value="15000" id="filter" class="slider" onmousemove="filterFreq(this.value)")/>
+                                    <input type="range" min="1" max="100" step="1" value="100" id="filter" class="slider" onmousemove="synthControls.filterFreq(this.value)")/>
                                     <p id="freqValue"></p>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="row">
                                 <label for="q" class="hidden">Q-value</label>
-                                    <input type="range" min="0.5" max="50" step="1" value="0.5" id="q" class="slider" onmousemove="filterQ(this.value)")/>
+                                    <input type="range" min="0.5" max="50" step="1" value="0.5" id="q" class="slider" onmousemove="synthControls.filterQ(this.value)")/>
                                     <p id="qValue"></p>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                             </div>
                             <div class="row">
                                 <label for="waveforms" class="hidden">Unison</label>
-                                <input type="range" min="0" max="25" step="0.5" value="0" id="waveforms" class="slider centered" onmousemove="unison(this.value)")/>
+                                <input type="range" min="0" max="25" step="0.5" value="0" id="waveforms" class="slider centered" onmousemove="synthControls.unison(this.value)")/>
                             </div>
                         </div>
                         
@@ -127,22 +127,22 @@
                     <div class="row">
                         <div class="col">    
                             <label for="attack" class="hidden">Attack</label>
-                            <input type="range" min="0" max="2" step="0.05" value="0" id="attack" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                            <input type="range" min="0" max="2" step="0.05" value="0" id="attack" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
                         </div>
 
                         <div class="col">   
                             <label for="decay" class="hidden">Decay</label>
-                            <input type="range" min="0" max="1" step="0.05" value="0" id="decay" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                            <input type="range" min="0" max="1" step="0.05" value="0" id="decay" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
                         </div> 
                         
                         <div class="col">    
                             <label for="sustain" class="hidden">Sustain</label>
-                            <input type="range" min="0" max="1" step="0.05" value="0.2" id="sustain" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                            <input type="range" min="0" max="1" step="0.05" value="0.2" id="sustain" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
                         </div>
 
                         <div class="col">    
                             <label for="release" class="hidden">Release</label>
-                            <input type="range" min="0" max="2" step="0.05" value="0" id="release" class="slider vertical" onchange="changeADSR(this.value, this.id)")/>
+                            <input type="range" min="0" max="2" step="0.05" value="0" id="release" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
                         </div> 
                     </div>     
                     
@@ -156,12 +156,20 @@
                 <div class="fx hidden" id="fxRows">
                     <div class="row">
                         <div class="col volumeUnison">
-                                <label for="delay">Time:</label>
-                                    <input type="range" min="0" max="1" step="0.01" value="0.1" id="time" class="slider" onmousemove="changeDelay(this.value)")/>
+                                <label for="time">Time:</label>
+                                    <input type="range" min="0" max="10000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value)")/>
                         </div>
                         <div class="col volumeUnison">
-                                <label for="delay">Feedback:</label>
-                                    <input type="range" min="0" max="1" step="0.1" value="0.1" id="feedback" class="slider" onmousemove="feedback(this.value)")/>
+                                <label for="feedback">Feedback:</label>
+                                    <input type="range" min="0" max="1" step="0.1" value="0" id="feedback" class="slider" onmousemove="synthControls.feedback(this.value)")/>
+                        </div>
+                        <div class="col volumeUnison">
+                                <label for="lfoDepth">Lfo-depth:</label>
+                                    <input type="range" min="0" max="10" step="0.1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.lfoDepth(this.value)")/>
+                        </div>
+                        <div class="col volumeUnison">
+                                <label for="lfoRate">Lfo-rate:</label>
+                                    <input type="range" min="0" max="1000" step="0.1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
                         </div>
                     </div>
                 </div>

@@ -20,8 +20,8 @@ const ADSR = {attack:0, decay:0, sustain:0.2, release:0};
 const STAGE_MAX_TIME = 2;
 
 const echo={
-  time:0.1,
-  feedback: 0.1
+  time:0,
+  feedback: 0
 };
 
 const NOTES = {
@@ -59,10 +59,10 @@ const KEYS = {
 
 let unisonWidth = 2;
 const oscBank = new Array(3);
-let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter;
+let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter, lfo, lfoGain;
 let osc, filter;
 let filterValue = 15000;
-let waveform = 1;
+let waveform = 2;
 let tuning = 1;
 let filterType = 0;
 let qValue = 0.5;
@@ -76,10 +76,6 @@ const volumeFieldEl = document.getElementById('volumeValue');
 volumeFieldEl.textContent = `${volume * 100}%`;
 freqValueEl.textContent = filterValue + 'hz'; 
 qValueEl.textContent = qValue; 
-
-
-
-
 
 function audioSetup(){
   actx = new (AudioContext || webkitAudioContext());
@@ -96,11 +92,18 @@ function audioSetup(){
   delayGain = actx.createGain();
   dlyLPFilter = actx.createBiquadFilter();
   dlyHPFilter = actx.createBiquadFilter();
-dlyLPFilter.frequency.value = 5000;
-dlyHPFilter.type = FILTERS[1];
-dlyHPFilter.frequency.value = 100;
-delayNode.delayTime.value= echo.time;
-delayGain.gain.value = echo.feedback;
+  delayNode.delayTime.value= echo.time;
+  delayGain.gain.value = echo.feedback;
+
+lfo = actx.createOscillator();
+  lfo.type = WAVEFORMS[0];
+  lfo.frequency.value = 0.01;
+  lfoGain = actx.createGain();
+  lfoGain.gain.value= 0.002;
+  lfo.connect(lfoGain);
+  lfoGain.connect(delayNode.delayTime);
+  lfo.start();
+
 }
 
 function display(element){
@@ -112,70 +115,88 @@ function display(element){
   }
 }
 
-function octaveSelect(octaveValue, octaveId){
-  tuning = octaveValue;
-  octaveId.classList.add('active');
-}
+const synthControls = {
+  octaveSelect: function(octaveValue){
+    tuning = octaveValue;
+  },
+  
+  volumeChange: function(volumeValue){
+      let muteButton = document.querySelector('.muteButton');
+      if (volumeValue === 0){
+        muteButton.src = 'images/mute.svg';
+      }
+      else{
+        muteButton.src = 'images/volume.svg';
+      }
+      masterGain.gain.value = volumeValue;
+      let textVolume = Math.trunc(volumeValue * 100);
+      volumeFieldEl.textContent = `${textVolume}%`;
+  },
 
-function volumeChange(volumeValue){
-    let muteButton = document.querySelector('.muteButton');
-    if (volumeValue === 0){
-      muteButton.src = 'images/mute.svg';
+  unison:function(unisonValue){
+      unisonWidth = unisonValue;
+  },
+  
+  waveformSelect:function(waveFormValue){
+    waveform = waveFormValue;
+  },
+  filterSelect:function(filterValue){
+    filterType = filterValue;
+  },
+  
+  filterFreq:function(value){
+    var minp = 0;
+    var maxp = 100;
+  
+    var minv = Math.log(20);
+    var maxv = Math.log(15000);
+  
+    var scale = (maxv - minv) / (maxp - minp);
+  
+    value = Math.trunc(Math.exp(minv + scale * (value - minp)));
+    filter.frequency.value = value;
+    filterValue = value;
+    freqValueEl.textContent= String(value) + 'hz';
+  
+  },
+  
+  filterQ:function(value){
+    filter.Q.value = value;
+    qValue = value;
+    qValueEl.textContent = String(value);
+  },
+  
+  changeDelay:function(value){
+    delayNode.delayTime.value = Number(value / 10000);
+  },
+  feedback:function(value){
+    delayGain.gain.value = value;
+  },
+  lfoDepth:function(value){
+    lfoGain.gain.value = Number (value / 1000); 
+  },
+  lfoRate:function(value){
+    lfo.frequency.value = Number (value / 1000); 
+  },
+  
+  changeADSR:function(value, envelope){
+    switch(envelope){
+      case 'attack':
+        ADSR.attack = Number(value);
+        break;
+      case 'decay':
+        ADSR.decay = Number(value);
+        break;
+      case 'release':
+        ADSR.release = Number(value);
+        break;
+      case 'sustain':
+        ADSR.sustain = Number(value);
+        break;
     }
-    else{
-      muteButton.src = 'images/volume.svg';
-    }
-    masterGain.gain.value = volumeValue;
-    volumeFieldEl.textContent = `${volumeValue* 100}%`;
-}
-function unison(unisonValue){
-    unisonWidth = unisonValue;
-}
-
-function waveformSelect(waveFormValue){
-  waveform = waveFormValue;
-}
-function filterSelect(filterValue){
-  filterType = filterValue;
-}
-
-function filterFreq(value){
-  filter.frequency.value = value;
-  filterValue = value;
-  freqValueEl.textContent= String(value) + 'hz';
-
-}
-
-function filterQ(value){
-  filter.Q.value = value;
-  qValue = value;
-  qValueEl.textContent = String(value);
-}
-
-function  changeDelay(value){
-  delayNode.delayTime.value = value;
-}
-function feedback(value){
-  delayGain.gain.value = value;
-}
-
-function changeADSR(value, envelope){
-  switch(envelope){
-    case 'attack':
-      ADSR.attack = value;
-      break;
-    case 'decay':
-      ADSR.decay = value;
-      break;
-    case 'release':
-      ADSR.release = value;
-      break;
-    case 'sustain':
-      ADSR.sustain = value;
-      break;
   }
-}
 
+}
 
 
 // START NOTE MOUSE
@@ -203,12 +224,11 @@ document.addEventListener('keydown', (event)=>{
   document.addEventListener('keyup',() =>{
     oscBank.forEach(element => noteOff(element));
     pressed = false;
-  
   });
   
 });
 
-function noteOn (note){
+function noteOn(note){
   vcaGain.gain.cancelScheduledValues(actx.currentTime);
   const freq = NOTES[note];
   oscBank[0] = start(freq, 0);
@@ -224,7 +244,6 @@ function noteOff(element){
   vcaGain.gain.setValueAtTime(vcaGain.gain.value, now);
   vcaGain.gain.linearRampToValueAtTime(0,relEndTime);
   element.stop(now);
-
 }
 
 // OSCILLATOR
@@ -232,16 +251,8 @@ const start = (freq, detune) =>{
 const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
-// let lfo = actx.createOscillator();
-//     lfo.type = 'square';
-//     lfo.frequency.value = 50;
-// let lfoGain = actx.createGain();
-// lfoGain.gain.value = 0.5;
-// lfo.connect(lfoGain);
-// lfoGain.connect(osc.frequency);
-// lfo.start();
 osc.detune.value = detune;
-let currentGain = 0.5;
+let currentGain = 0.5 / oscBank.length;
 vcaGain.gain.value= currentGain;
 osc.connect(vcaGain);
 
@@ -259,13 +270,19 @@ filter.type = FILTERS[filterType];
 filter.frequency.value = filterValue;
 filter.Q.value = qValue;
 vcaGain.connect(filter);
+
 //Delay Node
+dlyLPFilter.type = FILTERS[0];
+dlyHPFilter.type = FILTERS[1];
+dlyLPFilter.frequency.value = 2000;
+dlyHPFilter.frequency.value = 100;
 
 dlyLPFilter.connect(delayNode);
 dlyHPFilter.connect(delayNode);
 delayNode.connect(delayGain);
 delayGain.connect(delayNode);
 filter.connect(delayNode);
+filter.connect(masterGain);
 delayNode.connect(masterGain); 
 
 // Master volume
