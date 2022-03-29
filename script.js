@@ -16,7 +16,7 @@ const FILTERS = [
   'notch'
 ]
 
-const ADSR = {attack:0, decay:0, sustain:0.2, release:0};
+const ADSR = {attack:0, decay:0, sustain:1, release:0};
 const STAGE_MAX_TIME = 2;
 
 const echo={
@@ -129,6 +129,7 @@ const synthControls = {
         muteButton.src = 'images/volume.svg';
       }
       masterGain.gain.value = volumeValue;
+      volume = volumeValue;
       let textVolume = Math.trunc(volumeValue * 100);
       volumeFieldEl.textContent = `${textVolume}%`;
   },

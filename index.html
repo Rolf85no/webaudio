@@ -137,7 +137,7 @@
                         
                         <div class="col">    
                             <label for="sustain" class="hidden">Sustain</label>
-                            <input type="range" min="0" max="1" step="0.05" value="0.2" id="sustain" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
+                            <input type="range" min="0" max="1" step="0.05" value="1" id="sustain" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
                         </div>
 
                         <div class="col">    
@@ -169,7 +169,7 @@
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoRate">Lfo-rate:</label>
-                                    <input type="range" min="0" max="1000" step="0.1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
+                                    <input type="range" min="0" max="10000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
                         </div>
                     </div>
                 </div>
