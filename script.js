@@ -59,7 +59,7 @@ const KEYS = {
 
 let unisonWidth = 2;
 const oscBank = new Array(3);
-let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter, lfo, lfoGain;
+let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter, lfo, lfoGain, tremolo, tremoloGain;
 let osc, filter;
 let filterValue = 15000;
 let waveform = 2;
@@ -91,9 +91,14 @@ function audioSetup(){
   delayNode = actx.createDelay();
   delayGain = actx.createGain();
   dlyLPFilter = actx.createBiquadFilter();
-  dlyHPFilter = actx.createBiquadFilter();
+  dlyLPFilter.type = FILTERS[0];
+  dlyLPFilter.frequency.value = 2000;
   delayNode.delayTime.value= echo.time;
   delayGain.gain.value = echo.feedback;
+
+delayNode.connect(delayGain);
+delayGain.connect(dlyLPFilter);
+dlyLPFilter.connect(delayNode);
 
 lfo = actx.createOscillator();
   lfo.type = WAVEFORMS[0];
@@ -104,6 +109,13 @@ lfo = actx.createOscillator();
   lfoGain.connect(delayNode.delayTime);
   lfo.start();
 
+tremolo = actx.createOscillator();
+tremolo.type = WAVEFORMS[1];
+tremolo.frequency.value= 2;
+tremoloGain = actx.createGain();
+tremoloGain.gain.value = 0.5;
+tremolo.connect(tremoloGain);
+tremolo.start();
 }
 
 function display(element){
@@ -245,6 +257,7 @@ function noteOff(element){
   vcaGain.gain.setValueAtTime(vcaGain.gain.value, now);
   vcaGain.gain.linearRampToValueAtTime(0,relEndTime);
   element.stop(now);
+
 }
 
 // OSCILLATOR
@@ -256,7 +269,6 @@ osc.detune.value = detune;
 let currentGain = 0.5 / oscBank.length;
 vcaGain.gain.value= currentGain;
 osc.connect(vcaGain);
-
 //ATTACK DECAY
 const now = actx.currentTime;
 const atkDuration = ADSR.attack * STAGE_MAX_TIME;
@@ -265,29 +277,19 @@ const atkEndTime = actx.currentTime + atkDuration;
 vcaGain.gain.setValueAtTime(0, now);
 vcaGain.gain.linearRampToValueAtTime(currentGain,atkEndTime);
 vcaGain.gain.setTargetAtTime(ADSR.sustain * currentGain, atkEndTime, decayDuration);
-
+vcaGain.connect(filter);
 //FILTER BLOCK
 filter.type = FILTERS[filterType];
 filter.frequency.value = filterValue;
 filter.Q.value = qValue;
-vcaGain.connect(filter);
-
 //Delay Node
-dlyLPFilter.type = FILTERS[0];
-dlyHPFilter.type = FILTERS[1];
-dlyLPFilter.frequency.value = 2000;
-dlyHPFilter.frequency.value = 100;
-
-dlyLPFilter.connect(delayNode);
-dlyHPFilter.connect(delayNode);
-delayNode.connect(delayGain);
-delayGain.connect(delayNode);
-filter.connect(delayNode);
 filter.connect(masterGain);
+filter.connect(delayNode);
 delayNode.connect(masterGain); 
 
 // Master volume
 masterGain.gain.value = volume;
+masterGain.connect(masterGain);
 masterGain.connect(actx.destination);
 osc.start(now);
 return osc; 
