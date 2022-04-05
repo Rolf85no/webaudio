@@ -21,7 +21,7 @@ const STAGE_MAX_TIME = 2;
 
 const echo={
   time:0,
-  feedback: 0
+  feedback: 0.1
 };
 
 const NOTES = {
@@ -59,13 +59,13 @@ const KEYS = {
 
 let unisonWidth = 2;
 const oscBank = new Array(3);
-let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter, lfo, lfoGain, tremolo, tremoloGain;
+let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, lfo, lfoGain, tremolo, tremoloGain;
 let osc, filter;
 let filterValue = 15000;
 let waveform = 2;
 let tuning = 1;
 let filterType = 0;
-let qValue = 0.5;
+let qValue = 1;
 let volume = 0.5;
 let pressed = false;
 const synthEl = document.querySelector('.synth');
@@ -92,7 +92,7 @@ function audioSetup(){
   delayGain = actx.createGain();
   dlyLPFilter = actx.createBiquadFilter();
   dlyLPFilter.type = FILTERS[0];
-  dlyLPFilter.frequency.value = 2000;
+  dlyLPFilter.frequency.value = 3000;
   delayNode.delayTime.value= echo.time;
   delayGain.gain.value = echo.feedback;
 
@@ -102,9 +102,9 @@ dlyLPFilter.connect(delayNode);
 
 lfo = actx.createOscillator();
   lfo.type = WAVEFORMS[0];
-  lfo.frequency.value = 0.01;
+  lfo.frequency.value = 0;
   lfoGain = actx.createGain();
-  lfoGain.gain.value= 0.002;
+  lfoGain.gain.value= 0;
   lfo.connect(lfoGain);
   lfoGain.connect(delayNode.delayTime);
   lfo.start();
@@ -128,11 +128,29 @@ function display(element){
 }
 
 const synthControls = {
-  octaveSelect: function(octaveValue){
-    tuning = octaveValue;
-  },
+  octaveSelect:function(octaveValue){
+    let octave = Number (octaveValue);
+      if (octave < 0){
+        if(octave === -1)
+        tuning = 1 / 2;
+        else{
+          tuning = 1 / 4;
+        }
+      }
+      else if (octave === 0){
+        tuning = 1;
+      }
+      else if (octave === 1){
+        tuning = 2;
+      }
+     
+      else{
+        tuning = 4;
+      }
+        
+    },
   
-  volumeChange: function(volumeValue){
+  volumeChange:function(volumeValue){
       let muteButton = document.querySelector('.muteButton');
       if (volumeValue === 0){
         muteButton.src = 'images/mute.svg';
@@ -190,6 +208,20 @@ const synthControls = {
   },
   lfoRate:function(value){
     lfo.frequency.value = Number (value / 1000); 
+  },
+  changedlyType:function(value, name){
+    let analogDly = document.getElementById('ad');
+    let digitalDly = document.getElementById('dd');
+    dlyLPFilter.frequency.value = value;
+    if(name === analogDly.id && !analogDly.classList.contains('active')){
+      digitalDly.classList.remove('active');
+      analogDly.classList.add('active');
+    }
+    else if (name === digitalDly.id && !digitalDly.classList.contains('active')){
+      digitalDly.classList.add('active');
+      analogDly.classList.remove('active');
+    }
+    
   },
   
   changeADSR:function(value, envelope){
@@ -256,7 +288,7 @@ function noteOff(element){
   const relEndTime = now + relDuration;
   vcaGain.gain.setValueAtTime(vcaGain.gain.value, now);
   vcaGain.gain.linearRampToValueAtTime(0,relEndTime);
-  element.stop(now);
+  element.stop(relEndTime);
 
 }
 
@@ -284,8 +316,8 @@ filter.frequency.value = filterValue;
 filter.Q.value = qValue;
 //Delay Node
 filter.connect(masterGain);
-filter.connect(delayNode);
-delayNode.connect(masterGain); 
+filter.connect(dlyLPFilter);
+dlyLPFilter.connect(masterGain); 
 
 // Master volume
 masterGain.gain.value = volume;

@@ -11,50 +11,18 @@
     </head>
     <body>
         <div class="container">
-            <div class="synth hidden">
-                <div class="row slide-container">
-                        <div class="col">
-                            <label for="octDown">Down: </label>
-                            <input type="range" min="0.25" max="1" step="0.25" value="1" id="octDown" class="slider" onchange="synthControls.octaveSelect(this.value)"/>
-                        </div>
-                        
-                        <div class="col-2">Octaves</div>
-                            
-                        <div class="col"> 
-                            <label for="octUp">Up:</label>
-                            <input type="range" min="1" max="4" step="value * value" value="1" id="octUp" class="slider" onchange="synthControls.octaveSelect(this.value)"/>
-                        </div>          
-                </div>
-                
+            <div class="synth hidden">   
                 <div class="slide-container">
                     <div class="row">
-                        <div class="col">
-                        <label for="waveforms">Waveforms:</label>
-                            <input type="range" min="0" max="3" step="1" value="2" id="waveforms" class="slider centered" onchange="synthControls.waveformSelect(this.value)"/>
-                            <div class="row waveform-types">
-                                <div class="col">Sine</div>
-                                <div class="col">Square</div>
-                                <div class="col">Saw</div>
-                                <div class="col">Triangle</div>
+                        <div class="col octavepicker">
+                            <div class="row">
+                                <label for="octaves">Octave: </label>
                             </div>
-                        </div>
-
-                        <div class="col">
-                            <label for="filters">Filters: </label>
-                            <input type="range" min="0" max="3" step="1" value="0" id="filters" class="slider centered" onmousemove="synthControls.filterSelect(this.value)"/>
-                            <div class="row filter-types">
-                                <div class="col">LP</div>
-                                <div class="col">HP</div>
-                                <div class="col">BP</div>
-                                <div class="col">Notch</div>
+                            <div class="row">
+                                <input type="number" min="-2" max="2" value="0" id="octaves" name="octaves" onchange="synthControls.octaveSelect(this.value)"/>
                             </div>
+                           
                         </div>
-                    </div>
-                    
-                </div>
-
-                <div class="slide-container">
-                    <div class="row">
                         <div class="col volumeUnison">
                             <div class="row">
                                 <div class="col icon-col">
@@ -63,10 +31,41 @@
                             </div>
                             <div class="row">
                                 <label for="volume" class="hidden">Volume</label>
-                                    <input type="range" min="0" max="1" step="0.05" value="0.5" id="volume" class="slider" onmousemove="synthControls.volumeChange(this.value)")/>
+                                    <input type="range" min="0" max="0.9" step="0.05" value="0.5" id="volume" class="slider" onchange="synthControls.volumeChange(this.value)")/>
                                     <p id="volumeValue"></p>
                             </div>
                         </div>
+
+                        <div class="col waveFilter">
+                        <label for="waveforms">Waveforms:</label>
+                            <input type="range" min="0" max="3" step="1" value="2" id="waveforms" class="slider centered" onchange="synthControls.waveformSelect(this.value)"/>
+                            <div class="row waveform-types">
+                                <div class="col">Si</div>
+                                <div class="col">Squ</div>
+                                <div class="col">Saw</div>
+                                <div class="col">Tri</div>
+                            </div>
+                        </div>
+
+                        <div class="col volumeUnison">
+                            <div class="row">
+                                <div class="col icon-col">
+                                    <img src="images/width.svg" class="svgs">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="unsion" class="hidden">Unison</label>
+                                <input type="range" min="0.5" max="25" step="0.5" value="0.5" id="unison" class="slider centered" onmousemove="synthControls.unison(this.value)")/>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+
+                <div class="slide-container">
+                    <div class="row">
+                        
                         <div class="col volumeUnison">
                             <div class="row">
                                 <div class="col icon-col">
@@ -79,6 +78,17 @@
                                     <p id="freqValue"></p>
                             </div>
                         </div>
+
+                        <div class="col waveFilter">
+                            <label for="filters">Filters: </label>
+                            <input type="range" min="0" max="3" step="1" value="0" id="filters" class="slider centered" onmousemove="synthControls.filterSelect(this.value)"/>
+                            <div class="row filter-types">
+                                <div class="col">LP</div>
+                                <div class="col">HP</div>
+                                <div class="col">BP</div>
+                                <div class="col">N</div>
+                            </div>
+                        </div>
                         <div class="col volumeUnison">
                             <div class="row">
                                 <div class="col icon-col">
@@ -87,20 +97,8 @@
                             </div>
                             <div class="row">
                                 <label for="q" class="hidden">Q-value</label>
-                                    <input type="range" min="0.5" max="50" step="1" value="0.5" id="q" class="slider" onmousemove="synthControls.filterQ(this.value)")/>
+                                    <input type="range" min="1" max="50" step="1" value="1" id="q" class="slider" onmousemove="synthControls.filterQ(this.value)")/>
                                     <p id="qValue"></p>
-                            </div>
-                        </div>
-
-                        <div class="col volumeUnison">
-                            <div class="row">
-                                <div class="col icon-col">
-                                    <img src="images/width.svg" class="svgs">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <label for="waveforms" class="hidden">Unison</label>
-                                <input type="range" min="0" max="25" step="0.5" value="0" id="waveforms" class="slider centered" onmousemove="synthControls.unison(this.value)")/>
                             </div>
                         </div>
                         
@@ -149,11 +147,20 @@
                 </div>
 
                 <div class="row centered">
-                    <div class="col"><img src="images/piano.svg" class="keyboardButton"onclick="display(document.getElementById('pianoRoll'))"></div>
+                    <div class="col hidden"><img src="images/piano.svg" class="keyboardButton"onclick="display(document.getElementById('pianoRoll'))"></div>
                     <div class="col"><img src="images/fx.svg" class="keyboardButton" onclick="display(document.getElementById('fxRows'))"></div>
                 </div>
 
                 <div class="fx hidden" id="fxRows">
+                    <div class="row fxButtonRows">
+                        <div class="col">
+                            <button type="button" class="fxButtons active" id="ad" onclick="synthControls.changedlyType(3000, this.id)">Analog delay </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="dd" onclick="synthControls.changedlyType(15000,this.id)">Digital delay </button>
+                        </div>
+                        
+                    </div>
                     <div class="row">
                         <div class="col volumeUnison">
                                 <label for="time">Time:</label>
@@ -161,7 +168,7 @@
                         </div>
                         <div class="col volumeUnison">
                                 <label for="feedback">Feedback:</label>
-                                    <input type="range" min="0" max="1" step="0.1" value="0" id="feedback" class="slider" onmousemove="synthControls.feedback(this.value)")/>
+                                    <input type="range" min="0" max="1" step="0.1" value="0.1" id="feedback" class="slider" onmousemove="synthControls.feedback(this.value)")/>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoDepth">Lfo-depth:</label>
