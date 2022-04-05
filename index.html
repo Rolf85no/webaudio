@@ -107,22 +107,23 @@
                 
                 <div class="slide-container">
                     <div class="row">   
-                        <div class="col icon-col">
-                            <img src="images/attack.svg" class="svgs">
+                        <div class="col icon-col adsr-icon">
+                            <img src="images/attack.svg" class="svgs"> A
                         </div>
-                        <div class="col icon-col">
-                            <img src="images/decay.svg" class="svgs">
+                        <div class="col icon-col adsr-icon">
+                           <img src="images/decay.svg" class="svgs"> D
                         </div>
-                        <div class="col icon-col">
-                            <img src="images/sustain.svg" class="svgs">
+                        <div class="col icon-col adsr-icon">
+                           <img src="images/sustain.svg" class="svgs"> S
                         </div>   
-                        <div class="col icon-col">
-                            <img src="images/release.svg" class="svgs">
+                        <div class="col icon-col adsr-icon">
+                          <img src="images/release.svg" class="svgs"> R
                         </div>   
 
                     </div>
 
                     <div class="row">
+                        
                         <div class="col">    
                             <label for="attack" class="hidden">Attack</label>
                             <input type="range" min="0" max="2" step="0.05" value="0" id="attack" class="slider vertical" onchange="synthControls.changeADSR(this.value, this.id)")/>
@@ -164,19 +165,23 @@
                     <div class="row">
                         <div class="col volumeUnison">
                                 <label for="time">Time:</label>
-                                    <input type="range" min="0" max="10000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value)")/>
+                                    <input type="range" min="0" max="1000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value)")/>
+                                    <p id="timeValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="feedback">Feedback:</label>
                                     <input type="range" min="0" max="1" step="0.1" value="0.1" id="feedback" class="slider" onmousemove="synthControls.feedback(this.value)")/>
+                                    <p id="feedbackValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoDepth">Lfo-depth:</label>
                                     <input type="range" min="0" max="10" step="0.1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.lfoDepth(this.value)")/>
+                                    <p id="lfoDepthValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoRate">Lfo-rate:</label>
-                                    <input type="range" min="0" max="10000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
+                                    <input type="range" min="0" max="5000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
+                                    <p id="lfoRateValue"></p>
                         </div>
                     </div>
                 </div>

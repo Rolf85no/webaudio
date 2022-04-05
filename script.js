@@ -73,9 +73,17 @@ const startButton = document.querySelector('.start');
 const freqValueEl = document.getElementById('freqValue');
 const qValueEl = document.getElementById('qValue');
 const volumeFieldEl = document.getElementById('volumeValue');
+const timeDlyEl = document.getElementById('timeValue');
+const feedbackDlyEl = document.getElementById('feedbackValue');
+const lfoDepthValueEl = document.getElementById('lfoDepthValue');
+const lfoRateValueEl = document.getElementById('lfoRateValue');
 volumeFieldEl.textContent = `${volume * 100}%`;
 freqValueEl.textContent = filterValue + 'hz'; 
-qValueEl.textContent = qValue; 
+qValueEl.textContent = qValue;
+timeDlyEl.textContent = `${echo.time * 1000} ms`;
+feedbackDlyEl.textContent = `${echo.feedback * 100} %`;
+lfoDepthValueEl.textContent = `0 %`;
+lfoRateValueEl.textContent = `0 hz`;
 
 function audioSetup(){
   actx = new (AudioContext || webkitAudioContext());
@@ -188,7 +196,6 @@ const synthControls = {
     filter.frequency.value = value;
     filterValue = value;
     freqValueEl.textContent= String(value) + 'hz';
-  
   },
   
   filterQ:function(value){
@@ -198,16 +205,21 @@ const synthControls = {
   },
   
   changeDelay:function(value){
-    delayNode.delayTime.value = Number(value / 10000);
+    delayNode.delayTime.value = Number(value / 1000);
+    timeDlyEl.textContent = `${value} ms`;
   },
   feedback:function(value){
     delayGain.gain.value = value;
+    feedbackDlyEl.textContent = `${value * 100} %`;
   },
   lfoDepth:function(value){
-    lfoGain.gain.value = Number (value / 1000); 
+    lfoGain.gain.value = Number (value / 1000);
+    lfoDepthValueEl.textContent = `${value * 10} %`;
   },
   lfoRate:function(value){
-    lfo.frequency.value = Number (value / 1000); 
+    lfo.frequency.value = Number (value / 1000);
+    lfoRateValueEl.textContent = `${value / 1000} hz`;
+
   },
   changedlyType:function(value, name){
     let analogDly = document.getElementById('ad');

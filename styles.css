@@ -115,6 +115,11 @@
     text-align: left;
   }
 
+  .adsr-icon{
+    position: relative;
+    left: 2%;
+  }
+
   .volumeUnison{
     margin: 0 1rem;
   }
