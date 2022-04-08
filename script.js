@@ -59,15 +59,20 @@ const KEYS = {
 
 let unisonWidth = 2;
 const oscBank = new Array(4);
-let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, lfo, lfoGain, tremolo, tremoloGain;
-let osc, filter;
+let actx, vcaGain, masterGain, delayNode, delayFeedbackGain, dlyLPFilter, lfoDelay, 
+    lfoDelayGain, tremolo, chorusNode,chorusFeedback, tremoloGain, lfoChorus, lfoChorusGain;
+let osc, filter, osc2, osc2Gain;
 let filterValue = 15000;
 let waveform = 2;
+let waveform2 = waveform;
 let tuning = 1;
 let filterType = 0;
 let qValue = 1;
 let volume = 0.5;
+let osc2VolumeValue = 0; 
 let pressed = false;
+let osc2Detune = 7;
+let chorusBypass = true;
 const synthEl = document.querySelector('.synth');
 const startButton = document.querySelector('.start');
 const freqValueEl = document.getElementById('freqValue');
@@ -77,6 +82,8 @@ const timeDlyEl = document.getElementById('timeValue');
 const feedbackDlyEl = document.getElementById('feedbackValue');
 const lfoDepthValueEl = document.getElementById('lfoDepthValue');
 const lfoRateValueEl = document.getElementById('lfoRateValue');
+const osc2semiValueEl = document.getElementById('osc2SemiValue');
+const osc2VolumeTextEl = document.getElementById('osc2VolumeText');
 volumeFieldEl.textContent = `${volume * 100}%`;
 freqValueEl.textContent = filterValue + 'hz'; 
 qValueEl.textContent = qValue;
@@ -84,6 +91,8 @@ timeDlyEl.textContent = `${echo.time * 1000} ms`;
 feedbackDlyEl.textContent = `${echo.feedback * 100} %`;
 lfoDepthValueEl.textContent = `0 %`;
 lfoRateValueEl.textContent = `0 hz`;
+osc2semiValueEl.textContent = `7`;
+osc2VolumeTextEl.textContent = `${osc2VolumeValue * 100} %`;
 
 function audioSetup(){
   actx = new (AudioContext || webkitAudioContext());
@@ -97,33 +106,45 @@ function audioSetup(){
   masterGain = actx.createGain();
   filter = actx.createBiquadFilter();
   delayNode = actx.createDelay();
-  delayGain = actx.createGain();
+  delayFeedbackGain = actx.createGain();
   dlyLPFilter = actx.createBiquadFilter();
   dlyLPFilter.type = FILTERS[0];
   dlyLPFilter.frequency.value = 3000;
   delayNode.delayTime.value= echo.time;
-  delayGain.gain.value = echo.feedback;
-
-delayNode.connect(delayGain);
-delayGain.connect(dlyLPFilter);
+  delayFeedbackGain.gain.value = echo.feedback;
+  
 dlyLPFilter.connect(delayNode);
+delayNode.connect(delayFeedbackGain);
+delayFeedbackGain.connect(dlyLPFilter);
 
-lfo = actx.createOscillator();
-  lfo.type = WAVEFORMS[0];
-  lfo.frequency.value = 0;
-  lfoGain = actx.createGain();
-  lfoGain.gain.value= 0;
-  lfo.connect(lfoGain);
-  lfoGain.connect(delayNode.delayTime);
-  lfo.start();
 
-tremolo = actx.createOscillator();
-tremolo.type = WAVEFORMS[1];
-tremolo.frequency.value= 2;
-tremoloGain = actx.createGain();
-tremoloGain.gain.value = 0.5;
-tremolo.connect(tremoloGain);
-tremolo.start();
+lfoDelay = actx.createOscillator();
+  lfoDelay.type = WAVEFORMS[0];
+  lfoDelay.frequency.value = 0;
+  lfoDelayGain = actx.createGain();
+  lfoDelayGain.gain.value= 0;
+  lfoDelay.connect(lfoDelayGain);
+  lfoDelayGain.connect(delayNode.delayTime);
+  lfoDelay.start();
+
+
+  chorusNode = actx.createDelay();
+  chorusFeedback = actx.createGain();
+  chorusNode.delayTime.value = 0.001;
+  chorusFeedback.gain.value = 0.2;
+  chorusNode.connect(chorusFeedback);
+  chorusFeedback.connect(chorusNode);
+  
+
+
+lfoChorus = actx.createOscillator();
+lfoChorus.type = WAVEFORMS[0];
+lfoChorus.frequency.value= 0.1;
+lfoChorusGain = actx.createGain();
+lfoChorusGain.gain.value = 0.05;
+lfoChorus.connect(lfoChorusGain);
+lfoChorusGain.connect(chorusNode.delayTime);
+lfoChorus.start();
 }
 
 function display(element){
@@ -157,6 +178,25 @@ const synthControls = {
       }
         
     },
+
+  osc2Values:function(value, id){
+    switch (id){
+      case 'osc2Freq':
+        osc2Detune = value;
+        osc2semiValueEl.textContent = `${value}`;
+        break;
+      case 'waveformOsc2':
+        waveform2 = value;
+        break;
+
+      case 'osc2volume':
+        osc2VolumeValue = value;
+        osc2Gain.gain.value = value;
+        osc2VolumeTextEl.textContent = `${value * 100} %`;
+        break;
+    }
+    
+  },
   
   volumeChange:function(volumeValue){
       let muteButton = document.querySelector('.muteButton');
@@ -209,15 +249,15 @@ const synthControls = {
     timeDlyEl.textContent = `${value} ms`;
   },
   feedback:function(value){
-    delayGain.gain.value = value;
+    delayFeedbackGain.gain.value = value;
     feedbackDlyEl.textContent = `${value * 100} %`;
   },
   lfoDepth:function(value){
-    lfoGain.gain.value = Number (value / 1000);
+    lfoDelayGain.gain.value = Number (value / 1000);
     lfoDepthValueEl.textContent = `${value * 10} %`;
   },
   lfoRate:function(value){
-    lfo.frequency.value = Number (value / 1000);
+    lfoDelay.frequency.value = Number (value / 1000);
     lfoRateValueEl.textContent = `${value / 1000} hz`;
 
   },
@@ -234,6 +274,41 @@ const synthControls = {
       analogDly.classList.remove('active');
     }
     
+  },
+
+  chorusOn:function(name){
+    if(!chorusBypass){
+      name.classList.remove('active');
+      chorusBypass = true;
+      filter.disconnect(chorusNode);
+      chorusNode.disconnect(dlyLPFilter);
+    }
+    else{
+      name.classList.add('active');
+      chorusBypass = false;
+    }
+      
+  },
+
+  chorusChange:function(value, parameter){
+    switch(parameter){
+      case 'chorusTime':
+        let dlyTime = Number(value / 1000);
+        chorusNode.delayTime.value = dlyTime;
+        break;
+      
+      case 'chorusFeedback':
+        chorusFeedback.gain.value = value;
+        break;
+      
+      case 'chorusDepth':
+        lfoChorusGain.gain.value = Number (value / 1000);
+        break;
+
+      case 'chorusRate':
+        lfoChorus.frequency.value = Number (value / 1000);
+      break;
+    }
   },
   
   changeADSR:function(value, envelope){
@@ -285,6 +360,8 @@ document.addEventListener('keydown', (event)=>{
   
 });
 
+const transpose = (freq, steps) => freq * Math.pow(2, steps/12);
+
 function noteOn(note){
   vcaGain.gain.cancelScheduledValues(actx.currentTime);
   const freq = NOTES[note];
@@ -327,10 +404,20 @@ vcaGain.connect(filter);
 filter.type = FILTERS[filterType];
 filter.frequency.value = filterValue;
 filter.Q.value = qValue;
-//Delay Node
+
+if(!chorusBypass){
+  filter.connect(chorusNode);
+  filter.connect(dlyLPFilter);
+  chorusNode.connect(dlyLPFilter);
+  dlyLPFilter.connect(masterGain);
+  
+}
+else{
+  //Delay Node
 filter.connect(masterGain);
 filter.connect(dlyLPFilter);
 dlyLPFilter.connect(masterGain); 
+}
 
 // Master volume
 masterGain.gain.value = volume;
@@ -341,8 +428,17 @@ return osc;
  }
 
  const vco2 = (freq) => {
-   
+   osc2 = actx.createOscillator();
+   osc2Gain = actx.createGain();
+   osc2.type = WAVEFORMS[waveform2];
+   osc2.frequency.value = transpose(freq, osc2Detune);
+   osc2Gain.gain.value = osc2VolumeValue;
 
+   osc2.connect(osc2Gain);
+   osc2Gain.connect(vcaGain);
+   osc2.start(actx.currentTime);
+   return osc2;
+  
  }
 
 

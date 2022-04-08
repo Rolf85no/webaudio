@@ -11,7 +11,8 @@
     </head>
     <body>
         <div class="container">
-            <div class="synth hidden">   
+            <div class="synth hidden">
+                <!--------------OSC1 and MAIN VOLUME------------>   
                 <div class="slide-container">
                     <div class="row">
                         <div class="col octavepicker">
@@ -23,6 +24,7 @@
                             </div>
                            
                         </div>
+
                         <div class="col volumeUnison">
                             <div class="row">
                                 <div class="col icon-col">
@@ -37,7 +39,7 @@
                         </div>
 
                         <div class="col waveFilter">
-                        <label for="waveforms">Waveforms:</label>
+                        <label for="waveforms">Waveform main osc:</label>
                             <input type="range" min="0" max="3" step="1" value="2" id="waveforms" class="slider centered" onchange="synthControls.waveformSelect(this.value)"/>
                             <div class="row waveform-types">
                                 <div class="col">Si</div>
@@ -61,6 +63,39 @@
 
                     </div>
                     
+                </div>
+                <!--------------OSC2------------>   
+                <div class="slide-container">
+                    <div class="row">
+                        <div class="col volumeUnison">
+                            <div class="row">
+                                <label for="osc2Freq">Osc2 semi: </label>
+                            </div>
+                            <div class="row">
+                                <input type="range" min="-12" max="12" value="7" id="osc2Freq" name="osc2Freq" class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)"/>
+                                <p id="osc2SemiValue"></p>
+                            </div>
+                           
+                        </div>
+
+                        <div class="col waveFilter">
+                            <label for="waveformOsc2">Waveform osc 2:</label>
+                                <input type="range" min="0" max="3" step="1" value="2" id="waveformOsc2" class="slider centered" onchange="synthControls.osc2Values(this.value, this.id)"/>
+                                <div class="row waveform-types">
+                                    <div class="col">Si</div>
+                                    <div class="col">Squ</div>
+                                    <div class="col">Saw</div>
+                                    <div class="col">Tri</div>
+                                </div>
+                        </div>
+
+                        <div class="col volumeUnison">
+                                <label for="osc2volume">Osc2 Volume</label>
+                                    <input type="range" min="0" max="0.9" step="0.05" value="0" id="osc2volume" class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)")/>
+                                    <p id="osc2VolumeText"></p>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div class="slide-container">
@@ -183,6 +218,36 @@
                                     <input type="range" min="0" max="5000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
                                     <p id="lfoRateValue"></p>
                         </div>
+                    </div>
+
+                    <div class="row fxButtonRows">
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="chorusButton" onclick="synthControls.chorusOn(document.getElementById(this.id))">Chorus </button>
+                        </div>
+
+                        <div class="row">
+                            <div class="col volumeUnison">
+                                    <label for="chorusTime">Chorus Time:</label>
+                                        <input type="range" min="0" max="40" step="1" value="10" id="chorusTime" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
+                                        <p id="chorusTimeValue"></p>
+                            </div>
+                            <div class="col volumeUnison">
+                                    <label for="chrousFeedback">Chorus Feedback:</label>
+                                        <input type="range" min="0" max="1" step="0.1" value="0.2" id="chorusFeedback" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
+                                        <p id="chorusFeedbackValue"></p>
+                            </div>
+                            <div class="col volumeUnison">
+                                    <label for="lfoDepth">Chorus-depth:</label>
+                                        <input type="range" min="0" max="5" step="0.1" value="0.1" id="chorusDepth" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
+                                        <p id="chorusDepthValue"></p>
+                            </div>
+                            <div class="col volumeUnison">
+                                    <label for="lfoRate">Chorus-rate:</label>
+                                        <input type="range" min="0" max="5000" step="1" value="1" id="chorusRate" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
+                                        <p id="chorusRateValue"></p>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 
