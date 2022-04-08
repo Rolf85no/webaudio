@@ -58,7 +58,7 @@ const KEYS = {
 
 
 let unisonWidth = 2;
-const oscBank = new Array(3);
+const oscBank = new Array(4);
 let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, lfo, lfoGain, tremolo, tremoloGain;
 let osc, filter;
 let filterValue = 15000;
