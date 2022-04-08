@@ -58,8 +58,8 @@ const KEYS = {
 
 
 let unisonWidth = 2;
-const oscBank = new Array(3);
-let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, dlyHPFilter;
+const oscBank = new Array(4);
+let actx, vcaGain, masterGain, delayNode, delayGain, dlyLPFilter, lfo, lfoGain, tremolo, tremoloGain;
 let osc, filter;
 let filterValue = 15000;
 let waveform = 1;
@@ -211,24 +211,25 @@ document.addEventListener('keydown', (event)=>{
 function noteOn (note){
   vcaGain.gain.cancelScheduledValues(actx.currentTime);
   const freq = NOTES[note];
-  oscBank[0] = start(freq, 0);
-  oscBank[1] = start(freq, unisonWidth);
-  oscBank[2] = start(freq, -unisonWidth);
+  oscBank[0] = vco1(freq, 0);
+  oscBank[1] = vco1(freq, unisonWidth);
+  oscBank[2] = vco1(freq, -unisonWidth);
+  oscBank[3] = vco2(freq);
 };
 
 function noteOff(element){
   const now = actx.currentTime;
-  vcaGain.gain.cancelScheduledValues(now);
+  // vcaGain.gain.cancelScheduledValues(now);
   const relDuration = ADSR.release * STAGE_MAX_TIME;
   const relEndTime = now + relDuration;
   vcaGain.gain.setValueAtTime(vcaGain.gain.value, now);
-  vcaGain.gain.linearRampToValueAtTime(0,relEndTime);
-  element.stop(now);
+  vcaGain.gain.linearRampToValueAtTime(0.001,relEndTime);
+  element.stop(relEndTime);
 
 }
 
 // OSCILLATOR
-const start = (freq, detune) =>{
+const vco1 = (freq, detune) =>{
 const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
@@ -249,7 +250,7 @@ osc.connect(vcaGain);
 const now = actx.currentTime;
 const atkDuration = ADSR.attack * STAGE_MAX_TIME;
 const decayDuration = ADSR.decay * STAGE_MAX_TIME;
-const atkEndTime = actx.currentTime + atkDuration;
+const atkEndTime = now + atkDuration;
 vcaGain.gain.setValueAtTime(0, now);
 vcaGain.gain.linearRampToValueAtTime(currentGain,atkEndTime);
 vcaGain.gain.setTargetAtTime(ADSR.sustain * currentGain, atkEndTime, decayDuration);
@@ -273,6 +274,11 @@ masterGain.gain.value = volume;
 masterGain.connect(actx.destination);
 osc.start(now);
 return osc; 
+ }
+
+ const vco2 = (freq) => {
+   
+
  }
 
 
