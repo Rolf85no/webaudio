@@ -71,7 +71,6 @@ let qValue = 1;
 let volume = 0.5;
 let osc2VolumeValue = 0; 
 let pressed = false;
-let lfoConnected = false;
 let osc2Detune = 7;
 let chorusBypass = true;
 const synthEl = document.querySelector('.synth');
@@ -208,19 +207,19 @@ const synthControls = {
   },
 
   lfoConnection:function(type, name){
-    let gainValue = lfoGain.gain.value;
     switch (type) {
       case 'filter':
         name.classList.add('active');
         lfoGain.connect(filter.detune);
-        lfoConnected = true;
+        lfoGain.disconnect(masterGain.gain);
         break;
 
       case 'volume':
+        let gainValue = lfoGain.gain.value;
         name.classList.add('active');
         lfoGain.gain.value = gainValue / 2000;
-        lfoGain.connect(vcaGain.gain);
-        lfoConnected = true;
+        lfoGain.connect(masterGain.gain);
+        lfoGain.disconnect(filter.detune);
         break;
     }
 
@@ -454,7 +453,6 @@ dlyLPFilter.connect(masterGain);
 
 // Master volume
 masterGain.gain.value = volume;
-masterGain.connect(masterGain);
 masterGain.connect(actx.destination);
 osc.start(now);
 return osc; 
