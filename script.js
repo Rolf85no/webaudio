@@ -1,7 +1,6 @@
 
 'use strict'
 
-
 const WAVEFORMS = [
   'sine',
   'square',
@@ -15,6 +14,7 @@ const FILTERS = [
   'bandpass',
   'notch'
 ]
+
 
 const ADSR = {attack:0, decay:0, sustain:1, release:0};
 const STAGE_MAX_TIME = 2;
@@ -60,8 +60,8 @@ const KEYS = {
 let unisonWidth = 2;
 const oscBank = new Array(4);
 let actx, vcaGain, masterGain, delayNode, delayFeedbackGain, dlyLPFilter, lfoDelay, 
-    lfoDelayGain, tremolo, chorusNode,chorusFeedback, tremoloGain, lfoChorus, lfoChorusGain;
-let osc, filter, osc2, osc2Gain;
+    lfoDelayGain, tremolo, chorusNode,chorusFeedback, lfoChorus, lfoChorusGain;
+let osc, filter, osc2, osc2Gain, lfo, lfoGain;
 let filterValue = 15000;
 let waveform = 2;
 let waveform2 = waveform;
@@ -71,6 +71,7 @@ let qValue = 1;
 let volume = 0.5;
 let osc2VolumeValue = 0; 
 let pressed = false;
+let lfoConnected = false;
 let osc2Detune = 7;
 let chorusBypass = true;
 const synthEl = document.querySelector('.synth');
@@ -105,6 +106,18 @@ function audioSetup(){
   vcaGain = actx.createGain();
   masterGain = actx.createGain();
   filter = actx.createBiquadFilter();
+  osc2Gain = actx.createGain();
+
+  /////// LFO /////////
+  lfo = actx.createOscillator();
+  lfo.type = WAVEFORMS[0];
+  lfo.frequency.value = 1;
+  lfoGain = actx.createGain();
+  lfoGain.gain.value = 1000;
+  lfo.connect(lfoGain);
+  lfo.start();
+
+  /////// DELAY /////////
   delayNode = actx.createDelay();
   delayFeedbackGain = actx.createGain();
   dlyLPFilter = actx.createBiquadFilter();
@@ -112,13 +125,12 @@ function audioSetup(){
   dlyLPFilter.frequency.value = 3000;
   delayNode.delayTime.value= echo.time;
   delayFeedbackGain.gain.value = echo.feedback;
-  
-dlyLPFilter.connect(delayNode);
-delayNode.connect(delayFeedbackGain);
-delayFeedbackGain.connect(dlyLPFilter);
+  dlyLPFilter.connect(delayNode);
+  delayNode.connect(delayFeedbackGain);
+  delayFeedbackGain.connect(dlyLPFilter);
 
-
-lfoDelay = actx.createOscillator();
+  ///////// LFO-DELAY ///////
+  lfoDelay = actx.createOscillator();
   lfoDelay.type = WAVEFORMS[0];
   lfoDelay.frequency.value = 0;
   lfoDelayGain = actx.createGain();
@@ -127,24 +139,21 @@ lfoDelay = actx.createOscillator();
   lfoDelayGain.connect(delayNode.delayTime);
   lfoDelay.start();
 
-
+  ///////// CHORUS ///////////
   chorusNode = actx.createDelay();
   chorusFeedback = actx.createGain();
   chorusNode.delayTime.value = 0.001;
   chorusFeedback.gain.value = 0.2;
   chorusNode.connect(chorusFeedback);
   chorusFeedback.connect(chorusNode);
-  
-
-
-lfoChorus = actx.createOscillator();
-lfoChorus.type = WAVEFORMS[0];
-lfoChorus.frequency.value= 0.1;
-lfoChorusGain = actx.createGain();
-lfoChorusGain.gain.value = 0.05;
-lfoChorus.connect(lfoChorusGain);
-lfoChorusGain.connect(chorusNode.delayTime);
-lfoChorus.start();
+  lfoChorus = actx.createOscillator();
+  lfoChorus.type = WAVEFORMS[0];
+  lfoChorus.frequency.value= 0.1;
+  lfoChorusGain = actx.createGain();
+  lfoChorusGain.gain.value = 0.05;
+  lfoChorus.connect(lfoChorusGain);
+  lfoChorusGain.connect(chorusNode.delayTime);
+  lfoChorus.start();
 }
 
 function display(element){
@@ -179,23 +188,42 @@ const synthControls = {
         
     },
 
-  osc2Values:function(value, id){
+  osc2Values:function(changeValue, id){
     switch (id){
       case 'osc2Freq':
-        osc2Detune = value;
-        osc2semiValueEl.textContent = `${value}`;
+        osc2Detune = changeValue;
+        osc2semiValueEl.textContent = `${changeValue}`;
         break;
       case 'waveformOsc2':
-        waveform2 = value;
+        waveform2 = changeValue;
         break;
 
       case 'osc2volume':
-        osc2VolumeValue = value;
-        osc2Gain.gain.value = value;
-        osc2VolumeTextEl.textContent = `${value * 100} %`;
+        osc2Gain.gain.value = changeValue;
+        osc2VolumeValue = changeValue;
+        osc2VolumeTextEl.textContent = `${changeValue * 100} %`;
         break;
     }
     
+  },
+
+  lfoConnection:function(type, name){
+    let gainValue = lfoGain.gain.value;
+    switch (type) {
+      case 'filter':
+        name.classList.add('active');
+        lfoGain.connect(filter.detune);
+        lfoConnected = true;
+        break;
+
+      case 'volume':
+        name.classList.add('active');
+        lfoGain.gain.value = gainValue / 2000;
+        lfoGain.connect(vcaGain.gain);
+        lfoConnected = true;
+        break;
+    }
+
   },
   
   volumeChange:function(volumeValue){
@@ -244,23 +272,28 @@ const synthControls = {
     qValueEl.textContent = String(value);
   },
   
-  changeDelay:function(value){
-    delayNode.delayTime.value = Number(value / 1000);
-    timeDlyEl.textContent = `${value} ms`;
+  changeDelay:function(value, parameter){
+    switch(parameter){
+      case 'time':
+        delayNode.delayTime.value = Number(value / 1000);
+        timeDlyEl.textContent = `${value} ms`;
+        break;
+      case 'feedback':
+        delayFeedbackGain.gain.value = value;
+        feedbackDlyEl.textContent = `${value * 100} %`;
+        break;
+      case 'lfoDepth':
+        lfoDelayGain.gain.value = Number (value / 1000);
+        lfoDepthValueEl.textContent = `${value * 10} %`;
+        break;
+      case 'lfoRate':
+        lfoDelay.frequency.value = Number (value / 1000);
+        lfoRateValueEl.textContent = `${value / 1000} hz`;
+        break;
+    }
+    
   },
-  feedback:function(value){
-    delayFeedbackGain.gain.value = value;
-    feedbackDlyEl.textContent = `${value * 100} %`;
-  },
-  lfoDepth:function(value){
-    lfoDelayGain.gain.value = Number (value / 1000);
-    lfoDepthValueEl.textContent = `${value * 10} %`;
-  },
-  lfoRate:function(value){
-    lfoDelay.frequency.value = Number (value / 1000);
-    lfoRateValueEl.textContent = `${value / 1000} hz`;
 
-  },
   changedlyType:function(value, name){
     let analogDly = document.getElementById('ad');
     let digitalDly = document.getElementById('dd');
@@ -429,7 +462,6 @@ return osc;
 
  const vco2 = (freq) => {
    osc2 = actx.createOscillator();
-   osc2Gain = actx.createGain();
    osc2.type = WAVEFORMS[waveform2];
    osc2.frequency.value = transpose(freq, osc2Detune);
    osc2Gain.gain.value = osc2VolumeValue;

@@ -72,7 +72,7 @@
                                 <label for="osc2Freq">Osc2 semi: </label>
                             </div>
                             <div class="row">
-                                <input type="range" min="-12" max="12" value="7" id="osc2Freq" name="osc2Freq" class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)"/>
+                                <input type="range" min="-12" max="12" value="7" id="osc2Freq" name="osc2Freq"      class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)"/>
                                 <p id="osc2SemiValue"></p>
                             </div>
                            
@@ -90,9 +90,14 @@
                         </div>
 
                         <div class="col volumeUnison">
-                                <label for="osc2volume">Osc2 Volume</label>
-                                    <input type="range" min="0" max="0.9" step="0.05" value="0" id="osc2volume" class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)")/>
+                                <div class="row">
+                                    <label for="osc2Volume">Osc2 Volume</label>
+                                </div>
+                                <div class="row">
+                                    <input type="range" min="0" max="0.9" step="0.05" value="0" id="osc2volume" name="osc2Volume"class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)")/>
                                     <p id="osc2VolumeText"></p>
+                                </div>
+                                    
                         </div>
 
                     </div>
@@ -183,8 +188,12 @@
                 </div>
 
                 <div class="row centered">
-                    <div class="col hidden"><img src="images/piano.svg" class="keyboardButton"onclick="display(document.getElementById('pianoRoll'))"></div>
-                    <div class="col"><img src="images/fx.svg" class="keyboardButton" onclick="display(document.getElementById('fxRows'))"></div>
+                    <div class="col">
+                        <img src="images/lfo.svg" class="keyboardButton" onclick="display(document.getElementById('lfoRows'))">
+                    </div>
+                    <div class="col">
+                        <img src="images/fx.svg" class="keyboardButton" onclick="display(document.getElementById('fxRows'))">
+                    </div>
                 </div>
 
                 <div class="fx hidden" id="fxRows">
@@ -200,22 +209,22 @@
                     <div class="row">
                         <div class="col volumeUnison">
                                 <label for="time">Time:</label>
-                                    <input type="range" min="0" max="1000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value)")/>
+                                    <input type="range" min="0" max="1000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
                                     <p id="timeValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="feedback">Feedback:</label>
-                                    <input type="range" min="0" max="1" step="0.1" value="0.1" id="feedback" class="slider" onmousemove="synthControls.feedback(this.value)")/>
+                                    <input type="range" min="0" max="1" step="0.1" value="0.1" id="feedback" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
                                     <p id="feedbackValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoDepth">Lfo-depth:</label>
-                                    <input type="range" min="0" max="10" step="0.1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.lfoDepth(this.value)")/>
+                                    <input type="range" min="0" max="10" step="0.1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
                                     <p id="lfoDepthValue"></p>
                         </div>
                         <div class="col volumeUnison">
                                 <label for="lfoRate">Lfo-rate:</label>
-                                    <input type="range" min="0" max="5000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.lfoRate(this.value)")/>
+                                    <input type="range" min="0" max="5000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
                                     <p id="lfoRateValue"></p>
                         </div>
                     </div>
@@ -250,8 +259,39 @@
 
                     </div>
                 </div>
+
+                <div class="lfo hidden" id="lfoRows">
+                    <div class="row fxButtonRows">
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfoFilter"
+                                onclick="synthControls.lfoConnection('filter', document.getElementById(this.id))">Filter
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfoVolume"
+                                onclick="synthControls.lfoConnection('volume', document.getElementById(this.id))">Volume
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfoPitch"
+                                onclick="synthControls.lfoConnection('pitch', document.getElementById(this.id))">Pitch
+                            </button>
+                        </div>
+                        
+                    </div>
+
+
+                </div>
+
                 
-                <div id="pianoRoll" class="pianoRoll hidden">
+            </div>
+
+            <div class="row centered startButton">
+                <div class="col"><button class="start" onclick="audioSetup()">Start synth</button></div>
+            </div>
+        </div>
+        
+        <!-- <div id="pianoRoll" class="pianoRoll hidden">
                     <div class="tangenter">
                         <button data-note="c#4" class="keyboard">C#4</button>
                         <button data-note="d#4" class="keyboard">D#4</button>
@@ -271,15 +311,7 @@
                         <button data-note="h-4" class="keyboard">H-4</button>
                         <button data-note="c-5" class="keyboard">C-5</button>
                     </div>
-                </div>
-            </div>
-
-            <div class="row centered startButton">
-                <div class="col"><button class="start" onclick="audioSetup()">Start synth</button></div>
-            </div>
-        </div>
-        
-
+                </div>  -->
         
         <script src="script.js"></script>
     </body>
