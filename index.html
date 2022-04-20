@@ -196,6 +196,46 @@
                     </div>
                 </div>
 
+                <br>
+
+                <div class="lfo hidden" id="lfoRows">
+                    <div class="row fxButtonRows">
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfo_filter"
+                                onclick="synthControls.lfoConnection('filter', document.getElementById(this.id))">Filter
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfo_volume"
+                                onclick="synthControls.lfoConnection('volume', document.getElementById(this.id))">Volume
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="fxButtons" id="lfo_pitch"
+                                onclick="synthControls.lfoPitchChange(document.getElementById(this.id))">Pitch
+                            </button>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col volumeUnison">
+                            <label for="lfoRate">Lfo-rate:</label>
+                                <input type="range" min="0" max="100" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.changeLfo(this.value, this.id)")/>
+                                <p id="lfoRateValue"></p>
+                        </div>
+                        <div class="col volumeUnison">
+                            <label for="lfoDepth">Lfo-depth:</label>
+                                <input type="range" min="0" max="5000" step="1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.changeLfo(this.value, this.id)")/>
+                                <p id="lfoDepthValue"></p>
+                        </div>
+
+                    </div>
+                   
+
+                </div>
+
+                <br>
+
                 <div class="fx hidden" id="fxRows">
                     <div class="row fxButtonRows">
                         <div class="col">
@@ -218,14 +258,14 @@
                                     <p id="feedbackValue"></p>
                         </div>
                         <div class="col volumeUnison">
-                                <label for="lfoDepth">Lfo-depth:</label>
-                                    <input type="range" min="0" max="10" step="0.1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
-                                    <p id="lfoDepthValue"></p>
+                                <label for="dlyLfoDepth">Lfo-depth:</label>
+                                    <input type="range" min="0" max="10" step="0.1" value="0" id="dlyLfoDepth" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
+                                    <p id="dlyLfoDepthValue"></p>
                         </div>
                         <div class="col volumeUnison">
-                                <label for="lfoRate">Lfo-rate:</label>
-                                    <input type="range" min="0" max="5000" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
-                                    <p id="lfoRateValue"></p>
+                                <label for="dlyLfoRate">Lfo-rate:</label>
+                                    <input type="range" min="0" max="5000" step="1" value="0" id="dlyLfoRate" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
+                                    <p id="dlyLfoRateValue"></p>
                         </div>
                     </div>
 
@@ -246,41 +286,18 @@
                                         <p id="chorusFeedbackValue"></p>
                             </div>
                             <div class="col volumeUnison">
-                                    <label for="lfoDepth">Chorus-depth:</label>
+                                    <label for="chorusDepth">Chorus-depth:</label>
                                         <input type="range" min="0" max="5" step="0.1" value="0.1" id="chorusDepth" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
                                         <p id="chorusDepthValue"></p>
                             </div>
                             <div class="col volumeUnison">
-                                    <label for="lfoRate">Chorus-rate:</label>
+                                    <label for="chorusRate">Chorus-rate:</label>
                                         <input type="range" min="0" max="5000" step="1" value="1" id="chorusRate" class="slider" onmousemove="synthControls.chorusChange(this.value, this.id)")/>
                                         <p id="chorusRateValue"></p>
                             </div>
                         </div>
 
                     </div>
-                </div>
-
-                <div class="lfo hidden" id="lfoRows">
-                    <div class="row fxButtonRows">
-                        <div class="col">
-                            <button type="button" class="fxButtons" id="lfoFilter"
-                                onclick="synthControls.lfoConnection('filter', document.getElementById(this.id))">Filter
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button type="button" class="fxButtons" id="lfoVolume"
-                                onclick="synthControls.lfoConnection('volume', document.getElementById(this.id))">Volume
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button type="button" class="fxButtons" id="lfoPitch"
-                                onclick="synthControls.lfoConnection('pitch', document.getElementById(this.id))">Pitch
-                            </button>
-                        </div>
-                        
-                    </div>
-
-
                 </div>
 
                 

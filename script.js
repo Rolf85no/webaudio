@@ -56,12 +56,18 @@ const KEYS = {
   'k': 'c-5'
 }
 
+let lfoConnections = [
+  {"type":"filter","value":false},
+  {"type":"volume","value":false},
+  {"type":"pitch","value":false}
+]
+
 
 let unisonWidth = 2;
 const oscBank = new Array(4);
 let actx, vcaGain, masterGain, delayNode, delayFeedbackGain, dlyLPFilter, lfoDelay, 
     lfoDelayGain, tremolo, chorusNode,chorusFeedback, lfoChorus, lfoChorusGain;
-let osc, filter, osc2, osc2Gain, lfo, lfoGain;
+let osc, filter, osc2, osc2Gain, lfo, lfoGain, pitchLfo, pitchLfoGain;
 let filterValue = 15000;
 let waveform = 2;
 let waveform2 = waveform;
@@ -80,8 +86,8 @@ const qValueEl = document.getElementById('qValue');
 const volumeFieldEl = document.getElementById('volumeValue');
 const timeDlyEl = document.getElementById('timeValue');
 const feedbackDlyEl = document.getElementById('feedbackValue');
-const lfoDepthValueEl = document.getElementById('lfoDepthValue');
-const lfoRateValueEl = document.getElementById('lfoRateValue');
+const dlyLfoDepthValueEl = document.getElementById('dlyLfoDepthValue');
+const dlyLfoRateValueEl = document.getElementById('dlyLfoRateValue');
 const osc2semiValueEl = document.getElementById('osc2SemiValue');
 const osc2VolumeTextEl = document.getElementById('osc2VolumeText');
 volumeFieldEl.textContent = `${volume * 100}%`;
@@ -89,8 +95,8 @@ freqValueEl.textContent = filterValue + 'hz';
 qValueEl.textContent = qValue;
 timeDlyEl.textContent = `${echo.time * 1000} ms`;
 feedbackDlyEl.textContent = `${echo.feedback * 100} %`;
-lfoDepthValueEl.textContent = `0 %`;
-lfoRateValueEl.textContent = `0 hz`;
+dlyLfoDepthValueEl.textContent = `0 %`;
+dlyLfoRateValueEl.textContent = `0 hz`;
 osc2semiValueEl.textContent = `7`;
 osc2VolumeTextEl.textContent = `${osc2VolumeValue * 100} %`;
 
@@ -109,12 +115,21 @@ function audioSetup(){
 
   /////// LFO /////////
   lfo = actx.createOscillator();
-  lfo.type = WAVEFORMS[0];
+  lfo.type = WAVEFORMS[1];
   lfo.frequency.value = 1;
   lfoGain = actx.createGain();
   lfoGain.gain.value = 1000;
   lfo.connect(lfoGain);
   lfo.start();
+
+  ///// PITCH LFO
+  pitchLfo = actx.createOscillator();
+  pitchLfo.type = WAVEFORMS[1];
+  pitchLfo.frequency.value = 0;
+  pitchLfoGain = actx.createGain();
+  pitchLfoGain.gain.value = 0;
+  pitchLfo.connect(pitchLfoGain);
+  pitchLfo.start();
 
   /////// DELAY /////////
   delayNode = actx.createDelay();
@@ -207,22 +222,90 @@ const synthControls = {
   },
 
   lfoConnection:function(type, name){
+
+    lfoConnections.forEach(function(element){
+      if(element.value === true){
+        if(element.type === 'volume'){
+          lfoGain.disconnect(masterGain.gain);
+          document.getElementById(`lfo_${element.type}`).classList.remove('active');
+        }
+        else if(element.type === 'filter'){
+          lfoGain.disconnect(filter.detune);
+          document.getElementById(`lfo_${element.type}`).classList.remove('active');
+        }
+        else{
+          document.getElementById(`lfo_pitch`).classList.remove('active');
+          pitchLfoGain.gain.value = 0;
+          pitchLfo.frequency.value = 0;
+        }
+        element.value = false;
+
+      }   
+    });
+  
     switch (type) {
       case 'filter':
         name.classList.add('active');
         lfoGain.connect(filter.detune);
-        lfoGain.disconnect(masterGain.gain);
+        lfoConnections[0].value = true;
         break;
 
       case 'volume':
-        let gainValue = lfoGain.gain.value;
         name.classList.add('active');
-        lfoGain.gain.value = gainValue / 2000;
+        lfoGain.gain.value /= 2000;
         lfoGain.connect(masterGain.gain);
-        lfoGain.disconnect(filter.detune);
+        lfoConnections[1].value = true;
         break;
     }
+    
+  },
 
+  lfoPitchChange:function(name){
+    lfoConnections.forEach(function(element){
+      if(element.value === true){
+        if(element.type === 'volume'){
+          lfoGain.disconnect(masterGain.gain);
+          document.getElementById(`lfo_${element.type}`).classList.remove('active');
+        }
+        else if(element.type === 'filter'){
+          lfoGain.disconnect(filter.detune);
+          document.getElementById(`lfo_${element.type}`).classList.remove('active');
+        }
+        element.value = false;
+
+      }   
+    });
+    name.classList.add('active');
+    pitchLfoGain.gain.value = 100;
+    pitchLfo.frequency.value = 2;
+    lfoConnections[2].value = true;
+  },
+
+  changeLfo:function(value, type){
+
+    switch (type){
+      case 'lfoDepth':
+        if(lfoConnections[0].value === true){
+          lfoGain.gain.value = value;
+        }
+    
+        else if (lfoConnections[2].value === true){
+          pitchLfoGain.gain.value = value;
+        }
+        else{ 
+          lfoGain.gain.value = value / 10000;
+        }
+      break;
+      case 'lfoRate':
+        if (lfoConnections[2].value === true){
+          pitchLfo.frequency.value = value;
+        }
+        else{
+          lfo.frequency.value = value;
+        }
+      }
+    
+    
   },
   
   volumeChange:function(volumeValue){
@@ -281,13 +364,13 @@ const synthControls = {
         delayFeedbackGain.gain.value = value;
         feedbackDlyEl.textContent = `${value * 100} %`;
         break;
-      case 'lfoDepth':
+      case 'dlyLfoDepth':
         lfoDelayGain.gain.value = Number (value / 1000);
-        lfoDepthValueEl.textContent = `${value * 10} %`;
+        dlyLfoDepthValueEl.textContent = `${value * 10} %`;
         break;
-      case 'lfoRate':
+      case 'dlyLfoRate':
         lfoDelay.frequency.value = Number (value / 1000);
-        lfoRateValueEl.textContent = `${value / 1000} hz`;
+        dlyLfoRateValueEl.textContent = `${value / 1000} hz`;
         break;
     }
     
@@ -420,6 +503,7 @@ const osc = actx.createOscillator();
 osc.type = WAVEFORMS[waveform];
 osc.frequency.value = freq * tuning;
 osc.detune.value = detune;
+pitchLfoGain.connect(osc.detune);
 let currentGain = 0.5 / oscBank.length;
 vcaGain.gain.value= currentGain;
 osc.connect(vcaGain);
