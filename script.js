@@ -79,11 +79,13 @@ let osc2VolumeValue = 0;
 let pressed = false;
 let osc2Detune = 7;
 let chorusBypass = true;
+let clickedSomething = false;
 
 const synthEl = document.querySelector('.synth');
-const startButton = document.querySelector('.start');
+const startButton = document.querySelector('.startButton');
 const freqValueEl = document.getElementById('freqValue');
 const qValueEl = document.getElementById('qValue');
+const octaveValueEl = document.getElementById('octaveValue');
 const volumeFieldEl = document.getElementById('volumeValue');
 const unisonFieldEl = document.getElementById('unisonValue');
 
@@ -103,6 +105,7 @@ const osc2semiValueEl = document.getElementById('osc2SemiValue');
 const osc2VolumeTextEl = document.getElementById('osc2VolumeText');
 
 volumeFieldEl.textContent = `${volume * 100}%`;
+octaveValueEl.textContent = '0';
 unisonFieldEl.textContent = `${unisonWidth}`;
 freqValueEl.textContent = filterValue + 'hz'; 
 qValueEl.textContent = qValue;
@@ -201,6 +204,7 @@ function display(element){
   }
 }
 
+
 const synthControls = {
   octaveSelect:function(octaveValue){
     let octave = Number (octaveValue);
@@ -221,6 +225,7 @@ const synthControls = {
       else{
         tuning = 4;
       }
+      octaveValueEl.textContent = `${octaveValue}`;
         
     },
 
@@ -336,13 +341,6 @@ const synthControls = {
   },
   
   volumeChange:function(volumeValue){
-      let muteButton = document.querySelector('.muteButton');
-      if (volumeValue === 0){
-        muteButton.src = 'images/mute.svg';
-      }
-      else{
-        muteButton.src = 'images/volume.svg';
-      }
       masterGain.gain.value = volumeValue;
       volume = volumeValue;
       let textVolume = Math.trunc(volumeValue * 100);

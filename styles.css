@@ -1,5 +1,7 @@
+
+
 *{
-    font-family: 'Trebuchet MS', monospace;
+  font-family: 'Charis SIL', serif;
     margin: 0;
 }
 
@@ -20,9 +22,28 @@
     border: 2px outset #e5a9f8ad;
   }
 
+
+  #keypressed{
+    color: #888888;
+  }
+
+  input[type=number] {  
+    color: #7604aa;
+    cursor: pointer;
+  }
+
+  input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  margin: 2px 0;
+  cursor: pointer;
+}
+
+
+
   #octaves{
     background-color: #f6c5f8;
-    border: 1px outset #e5a9f8ad;
+    border: 2px outset #e5a9f8ad;
+    height: 29px;
   }
 
   .octavepicker, .wavefilter{
@@ -35,10 +56,6 @@
     opacity: 1;
   }
   
-  .vertical{
-    transform: rotate(-90deg);
-  width: 100px;
-  }
   
   .slider:hover {
     opacity: 1;
@@ -60,32 +77,8 @@
   }
 
   .slider::-webkit-slider-thumb:hover{
-    background: black;
+    background:#04aa72;
 
-  }
-
-  .keyboard, .start{
-    background-color: #7604aa;
-    color: #fff9f9;
-    width: 2.5rem;
-    height: 4rem;
-    border: transparent;
-    font-size: 1rem;
-    cursor: pointer;
-    margin: auto 8px;
-    border-radius: 10%;
-  }
-
-  .start{
-    background-color: #f2acf5;
-    color: #000000;
-    height: 2rem;
-    width: 8rem;
-    border-radius: 0;
-  }
-
-  .tangenter{
-      margin: 18px 0;
   }
 
   .container{
@@ -101,16 +94,13 @@
     display: none;
   }
 
-  .chooseFxButton{
-    width: 50%;
+  .chooseFxButton {
+    width: 126px;
+    text-align: center;
     height: 5rem;
     cursor: pointer;
-    display: flex;
-    flex-flow: column;
-    justify-content:center;
-    align-items: center;
     margin: 8px auto;
-    color:#7604aa;
+    color: black;
   }
 
   .chooseFxButton--image{
@@ -119,13 +109,12 @@
   }
 
   .chooseFxButton--text{
-
     margin: 0;
+    color:inherit;
   }
 
-  .chooseFxButton:hover{
-    
-    color:#f2acf5;
+  .chooseFxButton:hover{ 
+    color:#04aa72;
   }
   
 
@@ -142,11 +131,6 @@
     text-align: left;
   }
 
-  .adsr-icon{
-    position: relative;
-    top: -31px;
-    text-align: center;
-  }
 
   .volumeUnison{
     margin: 0 1rem;
@@ -159,33 +143,32 @@
 
   .fxButtons{
     background-color:#f6c5f8;
-    border: 2px outset white;
+    border: 1px outset white;
     color: black;
     width: 124px;
     height: 48px;
     outline: none;
     border-radius: 4px;
+    font-weight: 700;
+    font-family: 'Play', sans-serif;
+    letter-spacing: 2px;
 
   }
 
   .fxButtons:hover{
-    background-color: #7604aa;
     border: 2px inset black;
-    color: white;
   }
 
   .active{
-    background-color: #7604aa;
-    color: white;
+    background-color:#3bffbd;
+    color: black;
+    border: 2px outset black;
   }
 
   .fxButtonRows{
     margin: 8px auto;
   }
 
-  label{
-    text-align: left;
-  }
   
   .fxContainer{
     border-top:  2px solid #f6c5f8;
@@ -193,7 +176,7 @@
   }
 
   .adsr{
-    margin: 48px;
+    margin: 24px 1rem;
   }
 
   
@@ -209,12 +192,48 @@
 
   }
 .headers{
-  color: #7604aa;
-  font-size: 16px;
+  font-size: 18px;
   margin-bottom: 8px;
+  font-weight: 600;
+  font-family: 'Play', sans-serif;
+  letter-spacing: 2px;
+  
 }
 
 label{
-  font-weight: lighter;
-  color: #7604aa;
+  text-align: left;
+
+}
+
+.startButton{
+  cursor: pointer;
+  color:#3179af;
+}
+
+.startButton:hover{
+  color: #04aa72;
+}
+.startButton--image{
+  width: 400px;
+  margin: 0 auto;
+}
+
+.startButton--text{
+  margin: 0;
+  font-size: 36px;
+  font-family: 'Play', sans-serif;
+}
+
+.adsr-icon > h6, label, .chooseFxButton--text{
+  font-weight: 500;
+  font-family: 'Play', sans-serif;
+  letter-spacing: 2px;
+}
+
+.delay{
+  font-size: 14px;
+}
+
+.adsr-icon > h6, label{
+  color:#7604aa;
 }
