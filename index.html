@@ -12,13 +12,15 @@
     <body>
         <div class="container">
             <div class="synth hidden">
-                <p> Use keyboard to play notes. Range is from C-4(A) to C-5 (J)</p>
+                <!-- <a href="http://www.onlinewebfonts.com">Svgs by: oNline Web Fonts</a> -->
+                <p id="keyPressed"> Use keyboard to play notes. Range is from C-4(A) to C-5 (J) </p>
                 <!--------------OSC1 and MAIN VOLUME------------>   
-                <div class="slide-container">
+                <div class="slide-container mainControls">
+                    <div class="headers"> OSCILLATOR 1</div>
                     <div class="row">
                         <div class="col octavepicker">
                             <div class="row">
-                                <label for="octaves">Octave: </label>
+                                <label for="octaves">Octave </label>
                             </div>
                             <div class="row">
                                 <input type="number" min="-2" max="2" value="0" id="octaves" name="octaves" onchange="synthControls.octaveSelect(this.value)"/>
@@ -28,19 +30,14 @@
 
                         <div class="col volumeUnison">
                             <div class="row">
-                                <div class="col icon-col">
-                                    <img src="images/volume.svg" class="svgs muteButton" onclick="synthControls.volumeChange(0)">
-                                </div>  
-                            </div>
-                            <div class="row">
-                                <label for="volume" class="hidden">Volume</label>
+                                <label for="volume">Volume</label>
                                     <input type="range" min="0" max="0.9" step="0.05" value="0.5" id="volume" class="slider" onchange="synthControls.volumeChange(this.value)")/>
                                     <p id="volumeValue"></p>
                             </div>
                         </div>
 
                         <div class="col waveFilter">
-                        <label for="waveforms">Waveform main osc:</label>
+                        <label for="waveforms">Wave</label>
                             <input type="range" min="0" max="3" step="1" value="2" id="waveforms" class="slider centered" onchange="synthControls.waveformSelect(this.value)"/>
                             <div class="row waveform-types">
                                 <div class="col">Si</div>
@@ -58,6 +55,7 @@
                             </div>
                             <div class="row">
                                 <input type="range" min="0.5" max="25" step="0.5" value="0.5" id="unison" class="slider centered" onmousemove="synthControls.unison(this.value)")/>
+                                <p id="unisonValue"></p>
                             </div>
                         </div>
 
@@ -65,11 +63,12 @@
                     
                 </div>
                 <!--------------OSC2------------>   
-                <div class="slide-container">
+                <div class="slide-container osc2">
+                    <div class="headers"> OSCILLATOR 2</div>
                     <div class="row">
                         <div class="col volumeUnison">
                             <div class="row">
-                                <label for="osc2Freq">Osc2 semi: </label>
+                                <label for="osc2Freq">Semi-tones </label>
                             </div>
                             <div class="row">
                                 <input type="range" min="-12" max="12" value="7" id="osc2Freq" name="osc2Freq"      class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)"/>
@@ -79,7 +78,7 @@
                         </div>
 
                         <div class="col waveFilter">
-                            <label for="waveformOsc2">Waveform osc 2:</label>
+                            <label for="waveformOsc2">Wave</label>
                                 <input type="range" min="0" max="3" step="1" value="2" id="waveformOsc2" class="slider centered" onchange="synthControls.osc2Values(this.value, this.id)"/>
                                 <div class="row waveform-types">
                                     <div class="col">Si</div>
@@ -91,7 +90,7 @@
 
                         <div class="col volumeUnison">
                                 <div class="row">
-                                    <label for="osc2Volume">Osc2 Volume</label>
+                                    <label for="osc2Volume">Volume</label>
                                 </div>
                                 <div class="row">
                                     <input type="range" min="0" max="0.9" step="0.05" value="0" id="osc2volume" name="osc2Volume"class="slider" onmousemove="synthControls.osc2Values(this.value, this.id)")/>
@@ -103,24 +102,19 @@
                     </div>
                 </div>
 
-                <div class="slide-container">
-                    <div class="row">
-                        
+                <div class="slide-container filterControl">
+                    <div class="headers"> FILTER</div>
+                    <div class="row">  
                         <div class="col volumeUnison">
                             <div class="row">
-                                <div class="col icon-col">
-                                    <img src="images/filter.svg" class="svgs">
-                                </div>  
-                            </div>
-                            <div class="row">
-                                <label for="filter" class="hidden">Filter</label>
+                                <label for="filter">Frequency</label>
                                     <input type="range" min="1" max="100" step="1" value="100" id="filter" class="slider" onmousemove="synthControls.filterFreq(this.value)")/>
                                     <p id="freqValue"></p>
                             </div>
                         </div>
 
                         <div class="col waveFilter">
-                            <label for="filters">Filters: </label>
+                            <label for="filters">Type </label>
                             <input type="range" min="0" max="3" step="1" value="0" id="filters" class="slider centered" onmousemove="synthControls.filterSelect(this.value)"/>
                             <div class="row filter-types">
                                 <div class="col">LP</div>
@@ -130,13 +124,9 @@
                             </div>
                         </div>
                         <div class="col volumeUnison">
+                
                             <div class="row">
-                                <div class="col icon-col">
-                                    <img src="images/qvalue.svg" class="svgs">
-                                </div>  
-                            </div>
-                            <div class="row">
-                                <label for="q" class="hidden">Q-value</label>
+                                <label for="q">Q-value</label>
                                     <input type="range" min="1" max="50" step="1" value="1" id="q" class="slider" onmousemove="synthControls.filterQ(this.value)")/>
                                     <p id="qValue"></p>
                             </div>
@@ -145,19 +135,19 @@
                     </div>
                 </div>
                 
-                <div class="slide-container">
+                <div class="slide-container adsr">
                     <div class="row">   
-                        <div class="col icon-col adsr-icon">
-                            <img src="images/attack.svg" class="svgs"> A
+                        <div class="col icon-col adsr-icon"><h6>Attack</h6>
+                            <!-- <img src="images/attack.svg" class="svgs"> A -->
                         </div>
-                        <div class="col icon-col adsr-icon">
-                           <img src="images/decay.svg" class="svgs"> D
+                        <div class="col icon-col adsr-icon"><h6>Decay</h6>
+                           <!-- <img src="images/decay.svg" class="svgs"> D -->
                         </div>
-                        <div class="col icon-col adsr-icon">
-                           <img src="images/sustain.svg" class="svgs"> S
+                        <div class="col icon-col adsr-icon"><h6>Sustain</h6>
+                           <!-- <img src="images/sustain.svg" class="svgs"> S -->
                         </div>   
-                        <div class="col icon-col adsr-icon">
-                          <img src="images/release.svg" class="svgs"> R
+                        <div class="col icon-col adsr-icon"><h6>Release</h6>
+                          <!-- <img src="images/release.svg" class="svgs"> R -->
                         </div>   
 
                     </div>
@@ -186,19 +176,13 @@
                     </div>     
                     
                 </div>
-
-                <div class="row centered">
-                    <div class="col">
-                        <img src="images/lfo.svg" class="keyboardButton" onclick="display(document.getElementById('lfoRows'))">
-                        <p>LFO</p>
-                    </div>
-                    <div class="col">
-                        <img src="images/fx.svg" class="keyboardButton" onclick="display(document.getElementById('fxRows'))">
-                        <p>DLY/CHORUS</p>
-                    </div>
-                </div>
-
-                <br>
+            
+            <div class="fxContainer">   
+                        <div class="chooseFxButton" onclick="display(document.getElementById('lfoRows'))">  
+                            <img src="images/lfo2.svg" class="chooseFxButton--image" >
+                            <p class="chooseFxButton--text">LFO</p>
+                        </div>
+                    
 
                 <div class="lfo hidden" id="lfoRows">
                     <div class="row fxButtonRows">
@@ -219,24 +203,26 @@
                         </div>
                         
                     </div>
-                    <div class="row">
+                    <div class="row lfoControls">
                         <div class="col volumeUnison">
-                            <label for="lfoRate">Lfo-rate:</label>
+                            <label for="lfoRate">Lfo-rate</label>
                                 <input type="range" min="0" max="100" step="1" value="0" id="lfoRate" class="slider" onmousemove="synthControls.changeLfo(this.value, this.id)")/>
                                 <p id="lfoRateValue"></p>
                         </div>
                         <div class="col volumeUnison">
-                            <label for="lfoDepth">Lfo-depth:</label>
+                            <label for="lfoDepth">Lfo-depth</label>
                                 <input type="range" min="0" max="5000" step="1" value="0" id="lfoDepth" class="slider" onmousemove="synthControls.changeLfo(this.value, this.id)")/>
                                 <p id="lfoDepthValue"></p>
                         </div>
 
                     </div>
-                   
-
                 </div>
-
-                <br>
+    
+                <div class="chooseFxButton" onclick="display(document.getElementById('fxRows'))">
+                    <img src="images/fx.svg" class="chooseFxButton--image" >
+                <p class="chooseFxButton--text">DLY/CHORUS</p>
+                </div>
+                        
 
                 <div class="fx hidden" id="fxRows">
                     <div class="row fxButtonRows">
@@ -248,7 +234,7 @@
                         </div>
                         
                     </div>
-                    <div class="row">
+                    <div class="row delayControls">
                         <div class="col volumeUnison">
                                 <label for="time">Time:</label>
                                     <input type="range" min="0" max="1000" step="1" value="0" id="time" class="slider" onmousemove="synthControls.changeDelay(this.value, this.id)")/>
@@ -302,7 +288,7 @@
                     </div>
                 </div>
 
-                
+            </div>     
             </div>
 
             <div class="row centered startButton">

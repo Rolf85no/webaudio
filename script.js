@@ -63,7 +63,7 @@ let lfoConnections = [
 ]
 
 
-let unisonWidth = 2;
+let unisonWidth = 0.5;
 const oscBank = new Array(4);
 let actx, vcaGain, masterGain, delayNode, delayFeedbackGain, dlyLPFilter, lfoDelay, 
     lfoDelayGain, tremolo, chorusNode,chorusFeedback, lfoChorus, lfoChorusGain;
@@ -79,24 +79,46 @@ let osc2VolumeValue = 0;
 let pressed = false;
 let osc2Detune = 7;
 let chorusBypass = true;
+
 const synthEl = document.querySelector('.synth');
 const startButton = document.querySelector('.start');
 const freqValueEl = document.getElementById('freqValue');
 const qValueEl = document.getElementById('qValue');
 const volumeFieldEl = document.getElementById('volumeValue');
+const unisonFieldEl = document.getElementById('unisonValue');
+
 const timeDlyEl = document.getElementById('timeValue');
 const feedbackDlyEl = document.getElementById('feedbackValue');
 const dlyLfoDepthValueEl = document.getElementById('dlyLfoDepthValue');
 const dlyLfoRateValueEl = document.getElementById('dlyLfoRateValue');
+
+const chorusTimeEl = document.getElementById('chorusTimeValue');
+const chorusFeedbackEl = document.getElementById('chorusFeedbackValue');
+const chorusDepthEl = document.getElementById('chorusDepthValue');
+const chorusRateEl = document.getElementById('chorusRateValue');
+
+const lfoDepthValueEl = document.getElementById('lfoDepthValue');
+const lfoRateValueEl = document.getElementById('lfoRateValue');
 const osc2semiValueEl = document.getElementById('osc2SemiValue');
 const osc2VolumeTextEl = document.getElementById('osc2VolumeText');
+
 volumeFieldEl.textContent = `${volume * 100}%`;
+unisonFieldEl.textContent = `${unisonWidth}`;
 freqValueEl.textContent = filterValue + 'hz'; 
 qValueEl.textContent = qValue;
 timeDlyEl.textContent = `${echo.time * 1000} ms`;
 feedbackDlyEl.textContent = `${echo.feedback * 100} %`;
 dlyLfoDepthValueEl.textContent = `0 %`;
 dlyLfoRateValueEl.textContent = `0 hz`;
+
+chorusTimeEl.textContent = `off`;
+chorusFeedbackEl.textContent = `off`;
+chorusDepthEl.textContent = 'off';
+chorusRateEl.textContent = 'off';
+
+lfoDepthValueEl.textContent = `0 %`;
+lfoRateValueEl.textContent = `0 hz`;
+
 osc2semiValueEl.textContent = `7`;
 osc2VolumeTextEl.textContent = `${osc2VolumeValue * 100} %`;
 
@@ -285,6 +307,7 @@ const synthControls = {
 
     switch (type){
       case 'lfoDepth':
+        
         if(lfoConnections[0].value === true){
           lfoGain.gain.value = value;
         }
@@ -295,6 +318,8 @@ const synthControls = {
         else{ 
           lfoGain.gain.value = value / 10000;
         }
+        const lfoDepthText = Number (value / 50);
+        lfoDepthValueEl.textContent = `${Math.trunc(lfoDepthText)} %`;
       break;
       case 'lfoRate':
         if (lfoConnections[2].value === true){
@@ -303,6 +328,8 @@ const synthControls = {
         else{
           lfo.frequency.value = value;
         }
+        lfoRateValueEl.textContent = `${value} hz`;
+        break;
       }
     
     
@@ -324,6 +351,7 @@ const synthControls = {
 
   unison:function(unisonValue){
       unisonWidth = unisonValue;
+      unisonFieldEl.textContent = `${unisonValue}`;
   },
   
   waveformSelect:function(waveFormValue){
@@ -393,37 +421,53 @@ const synthControls = {
 
   chorusOn:function(name){
     if(!chorusBypass){
+      chorusTimeEl.textContent = `off`;
+      chorusFeedbackEl.textContent = `off`;
+      chorusDepthEl.textContent = `off`;
+      chorusRateEl.textContent = `off`;
       name.classList.remove('active');
       chorusBypass = true;
       filter.disconnect(chorusNode);
       chorusNode.disconnect(dlyLPFilter);
+      
     }
     else{
+      chorusTimeEl.textContent = `${document.getElementById('chorusTime').value} ms`;
+      chorusFeedbackEl.textContent = `${document.getElementById('chorusFeedback').value * 100} %`;
+      chorusDepthEl.textContent = `${document.getElementById('chorusDepth').value * 20} %`;
+      chorusRateEl.textContent = `${document.getElementById('chorusRate').value / 1000} hz`;
       name.classList.add('active');
       chorusBypass = false;
+
     }
       
   },
 
   chorusChange:function(value, parameter){
+    if(!chorusBypass){
     switch(parameter){
       case 'chorusTime':
         let dlyTime = Number(value / 1000);
         chorusNode.delayTime.value = dlyTime;
+        chorusTimeEl.textContent = `${value} ms`;
         break;
       
       case 'chorusFeedback':
         chorusFeedback.gain.value = value;
+        chorusFeedbackEl.textContent = `${value * 100} %`
         break;
       
       case 'chorusDepth':
         lfoChorusGain.gain.value = Number (value / 1000);
+        chorusDepthEl.textContent = `${value * 20} %`
         break;
 
       case 'chorusRate':
         lfoChorus.frequency.value = Number (value / 1000);
+        chorusRateEl.textContent = `${value / 1000}  hz `;
       break;
     }
+  }
   },
   
   changeADSR:function(value, envelope){
@@ -446,17 +490,17 @@ const synthControls = {
 }
 
 
-// START NOTE MOUSE
-document.querySelectorAll('button[data-note]').forEach((button)=>{
-  button.addEventListener('mousedown', () =>{
-  noteOn(button.dataset.note);
-  });
+// // START NOTE MOUSE
+// document.querySelectorAll('button[data-note]').forEach((button)=>{
+//   button.addEventListener('mousedown', () =>{
+//   noteOn(button.dataset.note);
+//   });
 
-  button.addEventListener('mouseup', () =>{
-    noteOff();
+//   button.addEventListener('mouseup', () =>{
+//     noteOff();
 
-  });
-});
+//   });
+// });
 
 //START NOTE KEYS
 document.addEventListener('keydown', (event)=>{
@@ -464,6 +508,7 @@ document.addEventListener('keydown', (event)=>{
   if (keyName in KEYS){
     if(!pressed){
       noteOn(KEYS[keyName]);
+      showKey(KEYS[keyName]);
       pressed = true;
     } 
   }
@@ -471,11 +516,22 @@ document.addEventListener('keydown', (event)=>{
   document.addEventListener('keyup',() =>{
     oscBank.forEach(element => noteOff(element));
     pressed = false;
+    showKey(null)
   });
   
 });
 
 const transpose = (freq, steps) => freq * Math.pow(2, steps/12);
+
+function showKey(keyPressed){
+  if(keyPressed){
+    const showKey = keyPressed.includes("-") ? keyPressed.slice(0,1) : keyPressed.slice(0,2);
+    document.getElementById('keyPressed').textContent = `Note played: ${showKey.toUpperCase()} `;
+  }
+  else{
+    document.getElementById('keyPressed').textContent = `Use keyboard to play notes. Range is from C-4(A) to C-5 (J)`;
+  }
+}
 
 function noteOn(note){
   vcaGain.gain.cancelScheduledValues(actx.currentTime);

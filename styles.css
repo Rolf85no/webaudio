@@ -1,9 +1,11 @@
 *{
     font-family: 'Trebuchet MS', monospace;
+    margin: 0;
 }
 
+
 .slide-container {
-    margin: 2rem auto;
+    margin: 0 auto;
   }
 
 
@@ -57,6 +59,11 @@
     cursor: pointer;
   }
 
+  .slider::-webkit-slider-thumb:hover{
+    background: black;
+
+  }
+
   .keyboard, .start{
     background-color: #7604aa;
     color: #fff9f9;
@@ -81,14 +88,10 @@
       margin: 18px 0;
   }
 
-
-
   .container{
-    margin-top: 6em;
+    padding: 3em 0;
       text-align: center;
   }
-
-
   .centered{
     margin: 0 auto;
   }
@@ -98,10 +101,34 @@
     display: none;
   }
 
-  .keyboardButton{
-    width: 4rem;
-    cursor: pointer; 
+  .chooseFxButton{
+    width: 50%;
+    height: 5rem;
+    cursor: pointer;
+    display: flex;
+    flex-flow: column;
+    justify-content:center;
+    align-items: center;
+    margin: 8px auto;
+    color:#7604aa;
   }
+
+  .chooseFxButton--image{
+    width: 100%;
+    height: 3rem;
+  }
+
+  .chooseFxButton--text{
+
+    margin: 0;
+  }
+
+  .chooseFxButton:hover{
+    
+    color:#f2acf5;
+  }
+  
+
 
   .svgs{
     width: 1.5rem;
@@ -117,7 +144,8 @@
 
   .adsr-icon{
     position: relative;
-    left: 2%;
+    top: -31px;
+    text-align: center;
   }
 
   .volumeUnison{
@@ -131,17 +159,19 @@
 
   .fxButtons{
     background-color:#f6c5f8;
-    border: 1px outset #e5a9f8ad;
+    border: 2px outset white;
     color: black;
-    width: 25%;
+    width: 124px;
     height: 48px;
     outline: none;
+    border-radius: 4px;
 
   }
 
   .fxButtons:hover{
     background-color: #7604aa;
-    color: #f6c5f8;
+    border: 2px inset black;
+    color: white;
   }
 
   .active{
@@ -156,3 +186,35 @@
   label{
     text-align: left;
   }
+  
+  .fxContainer{
+    border-top:  2px solid #f6c5f8;
+    padding: 16px;
+  }
+
+  .adsr{
+    margin: 48px;
+  }
+
+  
+
+  .filterControl, .osc2, .mainControls{
+    border-bottom: 2px solid #f6c5f8;
+    padding: 8px 24px;
+  }
+
+  .delayControls, .lfoControls{
+    border-bottom: 2px solid #f6c5f8;
+    margin-bottom: 18px;
+
+  }
+.headers{
+  color: #7604aa;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+label{
+  font-weight: lighter;
+  color: #7604aa;
+}
