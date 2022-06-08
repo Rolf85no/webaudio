@@ -27,33 +27,12 @@
     color: #888888;
   }
 
-  input[type=number] {  
-    color: #7604aa;
-    cursor: pointer;
-  }
 
-  input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  margin: 2px 0;
-  cursor: pointer;
-}
-
-
-
-  #octaves{
-    background-color: #f6c5f8;
-    border: 2px outset #e5a9f8ad;
-    height: 29px;
-  }
-
-  .octavepicker, .wavefilter{
+ .wavefilter, .volumeUnison{
     text-align: left;
   }
-  .octavepicker input, .waveform-types,.filter-types{
+ .waveform-types,.filter-types{
     text-align: center;
-  }
-  input[type=number]::-webkit-inner-spin-button {
-    opacity: 1;
   }
   
   
@@ -136,7 +115,6 @@ input::-webkit-inner-spin-button {
     margin: 0 1rem;
   }
 
-
   .muteButton{
     cursor: pointer;
   }
@@ -167,6 +145,7 @@ input::-webkit-inner-spin-button {
 
   .fxButtonRows{
     margin: 8px auto;
+    padding: 8px 0;
   }
 
   
@@ -176,14 +155,12 @@ input::-webkit-inner-spin-button {
   }
 
   .adsr{
-    margin: 24px 1rem;
+    margin-bottom: 32px;
   }
-
-  
 
   .filterControl, .osc2, .mainControls{
     border-bottom: 2px solid #f6c5f8;
-    padding: 8px 24px;
+  
   }
 
   .delayControls, .lfoControls{
@@ -193,17 +170,13 @@ input::-webkit-inner-spin-button {
   }
 .headers{
   font-size: 18px;
-  margin-bottom: 8px;
+  margin: 8px 0;
   font-weight: 600;
   font-family: 'Play', sans-serif;
   letter-spacing: 2px;
   
 }
 
-label{
-  text-align: left;
-
-}
 
 .startButton{
   cursor: pointer;
@@ -223,17 +196,19 @@ label{
   font-size: 36px;
   font-family: 'Play', sans-serif;
 }
-
-.adsr-icon > h6, label, .chooseFxButton--text{
-  font-weight: 500;
+ label, .chooseFxButton--text{
   font-family: 'Play', sans-serif;
-  letter-spacing: 2px;
 }
 
 .delay{
   font-size: 14px;
 }
 
-.adsr-icon > h6, label{
+ label{
   color:#7604aa;
 }
+
+p{
+  margin-left: 8px;
+}
+

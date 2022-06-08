@@ -502,7 +502,7 @@ const synthControls = {
 
 //START NOTE KEYS
 document.addEventListener('keydown', (event)=>{
-  let keyName = event.key;
+  let keyName = event.key.toLowerCase();
   if (keyName in KEYS){
     if(!pressed){
       noteOn(KEYS[keyName]);
