@@ -527,7 +527,7 @@ function showKey(keyPressed){
     document.getElementById('keyPressed').textContent = `Note played: ${showKey.toUpperCase()} `;
   }
   else{
-    document.getElementById('keyPressed').textContent = `Use keyboard to play notes. Range is from C-4(A) to C-5 (J)`;
+    document.getElementById('keyPressed').textContent = `Use keys from A to K to play notes. Note range is C4 to C5`;
   }
 }
 
